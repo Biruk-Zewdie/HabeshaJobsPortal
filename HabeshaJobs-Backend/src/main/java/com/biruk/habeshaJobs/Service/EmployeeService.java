@@ -1,21 +1,18 @@
 package com.biruk.habeshaJobs.Service;
 
-import com.biruk.habeshaJobs.DAO.EmployeeDAO;
+import com.biruk.habeshaJobs.DAO.JobSeekerDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class EmployeeService {
 
-    private final EmployeeDAO employeeDAO;
+    private final JobSeekerDAO jobSeekerDAO;
 
     @Autowired
-    public EmployeeService (EmployeeDAO employeeDAO){
-        this.employeeDAO = employeeDAO;
+    public EmployeeService (JobSeekerDAO jobSeekerDAO){
+        this.jobSeekerDAO = jobSeekerDAO;
     }
-
 
 
 

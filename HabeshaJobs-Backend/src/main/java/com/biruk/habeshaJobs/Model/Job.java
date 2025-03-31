@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -13,7 +14,7 @@ public class Job {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "job_ID")
+    @Column(name = "job_Id", nullable = false)
     private UUID jobId;
 
     @Column(nullable = false)
@@ -33,21 +34,25 @@ public class Job {
     private LocalDateTime updatedAt;
 
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "employer_id", nullable = false)
     private Employer employer;
 
-    //no args constructor
 
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL)
+    private List <JobApplication> jobApplications; // this will hold the job applications associated with this job. This allows us to track which job seekers have applied for this job.
+
+
+    //no args constructor
     public Job() {
 
     }
-
 
     //All args constructor
 
     public Job(UUID jobId, String jobTitle, double salary, String location,
                JobType jobType, JobDescription jobDescription, LocalDateTime createdAt,
-               LocalDateTime updatedAt, Employer employer) {
+               LocalDateTime updatedAt, Employer employer, List<JobApplication> jobApplications) {
         this.jobId = jobId;
         this.jobTitle = jobTitle;
         this.salary = salary;
@@ -57,6 +62,7 @@ public class Job {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.employer = employer;
+        this.jobApplications = jobApplications;
     }
 
 
@@ -134,6 +140,14 @@ public class Job {
         this.employer = employer;
     }
 
+    public List<JobApplication> getJobApplications() {
+        return jobApplications;
+    }
+
+    public void setJobApplications(List<JobApplication> jobApplications) {
+        this.jobApplications = jobApplications;
+    }
+
     public enum JobType {
         fullTime,
         partTime,
@@ -154,6 +168,7 @@ public class Job {
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 ", employer=" + employer +
+                ", jobApplications=" + jobApplications +
                 '}';
     }
 }

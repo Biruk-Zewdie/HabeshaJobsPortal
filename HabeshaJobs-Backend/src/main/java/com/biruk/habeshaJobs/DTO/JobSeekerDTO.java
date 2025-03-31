@@ -1,17 +1,17 @@
 package com.biruk.habeshaJobs.DTO;
 
-import com.biruk.habeshaJobs.Model.Employee;
+import com.biruk.habeshaJobs.Model.JobSeeker;
 import com.biruk.habeshaJobs.Model.Reference;
 import com.biruk.habeshaJobs.Model.WorkExperience;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class EmployeeDTO {
+public class JobSeekerDTO {
 
-    private UUID employeeId;
+
+    private UUID jobSeekerId;
     private String firstName;
     private String lastName;
     private String email;
@@ -24,17 +24,17 @@ public class EmployeeDTO {
     private String resumeUrl;
     private List<String> education;
     private List<WorkExperience> workExperiences;
-    private Map<String, Employee.SkillLevel> skills;
+    private Map<String, JobSeeker.SkillLevel> skills;
     private List <Reference> references;
 
-    public EmployeeDTO() {
+    public JobSeekerDTO() {
     }
 
-    public EmployeeDTO(UUID employeeId, String firstName, String lastName, String email, String zipcode,
-                       String city, String state, String country, String profilePictureUrl, String linkedInUrl,
-                       String resumeUrl, List<String> education, List<WorkExperience> workExperiences,
-                       Map<String, Employee.SkillLevel> skills, List<Reference> references) {
-        this.employeeId = employeeId;
+    public JobSeekerDTO(UUID jobSeekerId, String firstName, String lastName, String email, String zipcode,
+                        String city, String state, String country, String profilePictureUrl, String linkedInUrl,
+                        String resumeUrl, List<String> education, List<WorkExperience> workExperiences,
+                        Map<String, JobSeeker.SkillLevel> skills, List<Reference> references) {
+        this.jobSeekerId = jobSeekerId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -52,12 +52,12 @@ public class EmployeeDTO {
     }
 
 
-    public UUID getEmployeeId() {
-        return employeeId;
+    public UUID getJobSeekerId() {
+        return jobSeekerId;
     }
 
-    public void setEmployeeId(UUID employeeId) {
-        this.employeeId = employeeId;
+    public void setJobSeekerId(UUID jobSeekerId) {
+        this.jobSeekerId = jobSeekerId;
     }
 
     public String getFirstName() {
@@ -156,11 +156,11 @@ public class EmployeeDTO {
         this.workExperiences = workExperiences;
     }
 
-    public Map<String, Employee.SkillLevel> getSkills() {
+    public Map<String, JobSeeker.SkillLevel> getSkills() {
         return skills;
     }
 
-    public void setSkills(Map<String, Employee.SkillLevel> skills) {
+    public void setSkills(Map<String, JobSeeker.SkillLevel> skills) {
         this.skills = skills;
     }
 
@@ -174,8 +174,8 @@ public class EmployeeDTO {
 
     @Override
     public String toString() {
-        return "EmployeeDTO{" +
-                "employeeId=" + employeeId +
+        return "JobSeekerDTO{" +
+                "jobSeekerId=" + jobSeekerId +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +

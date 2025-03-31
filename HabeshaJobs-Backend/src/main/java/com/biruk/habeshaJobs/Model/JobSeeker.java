@@ -1,5 +1,6 @@
 package com.biruk.habeshaJobs.Model;
 
+import com.biruk.habeshaJobs.Model.Common.Address;
 import jakarta.persistence.*;
 import org.springframework.stereotype.Component;
 
@@ -9,12 +10,12 @@ import java.util.*;
 
 @Component
 @Entity
-@Table(name = "Employee")
-public class Employee {
+@Table(name = "JobSeeker")
+public class JobSeeker {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID employeeId;
+    private UUID jobSeekerId;
 
     @Column(nullable = false)
     private String firstName;
@@ -30,11 +31,8 @@ public class Employee {
 
     private LocalDate dateOfBirth;
 
-    //location
-    private String zipcode;
-    private String city;
-    private String state;
-    private String country;
+    @Embedded
+    private Address address;
 
 
     private String password;
@@ -46,14 +44,14 @@ public class Employee {
 
     private String linkedInUrl;
 
-    //Employee skills mapped with skill levels
+    //JobSeeker skills mapped with skill levels
     @ElementCollection
-    @CollectionTable(name = "employee_skills", joinColumns = @JoinColumn(name = "employeeId"))
+    @CollectionTable(name = "jobSeeker_skills", joinColumns = @JoinColumn(name = "jobSeekerId"))
     @MapKeyColumn(name = "skill_name")
     @Column(name = "skill_level")
     private Map<String, SkillLevel> skills = new HashMap<>();
 
-    //these are used to track the employee date of sign up
+    //these are used to track the jobSeeker date of sign up
     private LocalDateTime dateOfJoining;
 
     private String resumeUrl;
@@ -64,37 +62,27 @@ public class Employee {
     @ ElementCollection
     private List<Reference> references = new ArrayList<>();
 
-    //Employment Status Enum
-    public enum IsActiveJobSeeker {
-        Yes,
-        No,
-    }
 
-    //Employee skills enum
-    public enum SkillLevel{
-        Beginner,
-        Intermediate,
-        Expert
-    }
+    @OneToMany (mappedBy = "jobSeeker", cascade = CascadeType.ALL)
+    private List <JobApplication> jobApplication = new ArrayList<> ();
 
-    public Employee() {
+
+
+    public JobSeeker() {
 
     }
 
-    public Employee(UUID employeeId, String firstName, String lastName, String phoneNumber, String email, LocalDate dateOfBirth,
-                    String zipcode, String city, String state, String country, String password, List<String> education,
-                    String profilePictureUrl, IsActiveJobSeeker isActiveJobSeeker, String linkedInUrl, Map<String, SkillLevel> skills,
-                    LocalDateTime dateOfJoining, String resumeUrl, List<WorkExperience> workExperiences, List<Reference> references) {
-        this.employeeId = employeeId;
+    public JobSeeker(UUID jobSeekerId, String firstName, String lastName, String phoneNumber, String email, LocalDate dateOfBirth,
+                     Address address, String password, List<String> education, String profilePictureUrl, IsActiveJobSeeker isActiveJobSeeker,
+                     String linkedInUrl, Map<String, SkillLevel> skills, LocalDateTime dateOfJoining, String resumeUrl,
+                     List<WorkExperience> workExperiences, List<Reference> references, List <JobApplication> jobApplication) {
+        this.jobSeekerId = jobSeekerId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.dateOfBirth = dateOfBirth;
-        this.zipcode = zipcode;
-        this.city = city;
-        this.state = state;
-        this.country = country;
+        this.address = address;
         this.password = password;
         this.education = education;
         this.profilePictureUrl = profilePictureUrl;
@@ -105,14 +93,15 @@ public class Employee {
         this.resumeUrl = resumeUrl;
         this.workExperiences = workExperiences;
         this.references = references;
+        this.jobApplication = jobApplication;
     }
 
-    public UUID getEmployeeId() {
-        return employeeId;
+    public UUID getJobSeekerId() {
+        return jobSeekerId;
     }
 
-    public void setEmployeeId(UUID employeeId) {
-        this.employeeId = employeeId;
+    public void setJobSeekerId(UUID jobSeekerId) {
+        this.jobSeekerId = jobSeekerId;
     }
 
     public String getFirstName() {
@@ -155,36 +144,12 @@ public class Employee {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public String getZipcode() {
-        return zipcode;
+    public Address getAddress (){
+        return address;
     }
 
-    public void setZipcode(String zipcode) {
-        this.zipcode = zipcode;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
+    public void setAddress (Address address) {
+        this.address = address;
     }
 
     public String getPassword() {
@@ -267,19 +232,37 @@ public class Employee {
         this.references = references;
     }
 
+    public List<JobApplication> getJobApplication() {
+        return jobApplication;
+    }
+
+    public void setJobApplication(List<JobApplication> jobApplication) {
+        this.jobApplication = jobApplication;
+    }
+
+    //Employment Status Enum
+    public enum IsActiveJobSeeker {
+        Yes,
+        No,
+    }
+
+    //JobSeeker skills enum
+    public enum SkillLevel{
+        Beginner,
+        Intermediate,
+        Expert
+    }
+
     @Override
     public String toString() {
-        return "Employee{" +
-                "employeeId=" + employeeId +
+        return "JobSeeker{" +
+                "jobSeekerId=" + jobSeekerId +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
-                ", zipcode='" + zipcode + '\'' +
-                ", city='" + city + '\'' +
-                ", state='" + state + '\'' +
-                ", country='" + country + '\'' +
+                ", address='" + address + '\'' +
                 ", password='" + password + '\'' +
                 ", education=" + education +
                 ", profilePictureUrl='" + profilePictureUrl + '\'' +

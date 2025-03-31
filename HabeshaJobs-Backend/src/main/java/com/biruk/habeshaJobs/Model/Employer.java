@@ -1,5 +1,6 @@
 package com.biruk.habeshaJobs.Model;
 
+import com.biruk.habeshaJobs.Model.Common.Address;
 import jakarta.persistence.*;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,7 @@ public class Employer {
 
     @Id
     @GeneratedValue (strategy = GenerationType.UUID)
+    @Column (name = "employer_Id", nullable = false)
     private UUID employerId;
 
     @Column(nullable = false)
@@ -23,9 +25,10 @@ public class Employer {
     @Column(nullable = false)
     private String email;
     private String password;
-    private String city;
-    private String state;
-    private String country;
+
+    @Embedded
+    private Address address;
+
     private String industrySector;
     private String description;
     private LocalDateTime registrationDate;
@@ -35,28 +38,30 @@ public class Employer {
     @OneToMany(mappedBy = "employer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Job> jobsPosted = new ArrayList<>();
 
+    @OneToMany(mappedBy = "employer", cascade = CascadeType.ALL)
+    private List<JobApplication> jobApplications = new ArrayList<> ();     // this will hold the job applications associated with this employer.
+
 
     public Employer() {
     }
 
-    public Employer(UUID employerId, String companyName, String email, String password, String city, String state,
-                    String country, String industrySector, String description, LocalDateTime registrationDate,
-                    String logoUrl, CompanySize companySize, List<Job> jobsPosted) {
+    public Employer(UUID employerId, String companyName, String email, String password, Address address,
+                    String industrySector, String description, LocalDateTime registrationDate, String logoUrl,
+                    CompanySize companySize, List<Job> jobsPosted, List <JobApplication> jobApplications) {
+
         this.employerId = employerId;
         this.companyName = companyName;
         this.email = email;
         this.password = password;
-        this.city = city;
-        this.state = state;
-        this.country = country;
+        this.address = address;
         this.industrySector = industrySector;
         this.description = description;
         this.registrationDate = registrationDate;
         this.logoUrl = logoUrl;
         this.companySize = companySize;
         this.jobsPosted = jobsPosted;
+        this.jobApplications = jobApplications;
     }
-
 
     public UUID getEmployerId() {
         return employerId;
@@ -90,28 +95,12 @@ public class Employer {
         this.password = password;
     }
 
-    public String getCity() {
-        return city;
+    public Address getAddress() {
+        return address;
     }
 
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     public String getIndustrySector() {
@@ -162,6 +151,14 @@ public class Employer {
         this.jobsPosted = jobsPosted;
     }
 
+    public List<JobApplication> getJobApplications() {
+        return jobApplications;
+    }
+
+    public void setJobApplications (List <JobApplication> jobApplications) {
+        this.jobApplications = jobApplications;
+    }
+
     public enum CompanySize{
         Small,
         Medium,
@@ -175,15 +172,14 @@ public class Employer {
                 ", companyName='" + companyName + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", city='" + city + '\'' +
-                ", state='" + state + '\'' +
-                ", country='" + country + '\'' +
+                ", address=" + address +
                 ", industrySector='" + industrySector + '\'' +
                 ", description='" + description + '\'' +
                 ", registrationDate=" + registrationDate +
                 ", logoUrl='" + logoUrl + '\'' +
                 ", companySize=" + companySize +
                 ", jobsPosted=" + jobsPosted +
+                ", jobApplications=" + jobApplications +
                 '}';
     }
 }
