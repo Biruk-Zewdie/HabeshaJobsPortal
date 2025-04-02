@@ -1,4 +1,4 @@
-package com.biruk.habeshaJobs.Model;
+package com.biruk.habeshaJobs.Model.JobSeeker;
 
 import jakarta.persistence.Embeddable;
 

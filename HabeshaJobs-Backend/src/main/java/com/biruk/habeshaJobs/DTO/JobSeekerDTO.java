@@ -1,8 +1,9 @@
 package com.biruk.habeshaJobs.DTO;
 
-import com.biruk.habeshaJobs.Model.JobSeeker;
-import com.biruk.habeshaJobs.Model.Reference;
-import com.biruk.habeshaJobs.Model.WorkExperience;
+import com.biruk.habeshaJobs.Model.Common.Address;
+import com.biruk.habeshaJobs.Model.JobSeeker.JobSeeker;
+import com.biruk.habeshaJobs.Model.JobSeeker.Reference;
+import com.biruk.habeshaJobs.Model.JobSeeker.WorkExperience;
 
 import java.util.List;
 import java.util.Map;
@@ -15,10 +16,7 @@ public class JobSeekerDTO {
     private String firstName;
     private String lastName;
     private String email;
-    private String zipcode;
-    private String city;
-    private String state;
-    private String country;
+    private Address address;
     private String profilePictureUrl;
     private String linkedInUrl;
     private String resumeUrl;
@@ -30,18 +28,14 @@ public class JobSeekerDTO {
     public JobSeekerDTO() {
     }
 
-    public JobSeekerDTO(UUID jobSeekerId, String firstName, String lastName, String email, String zipcode,
-                        String city, String state, String country, String profilePictureUrl, String linkedInUrl,
-                        String resumeUrl, List<String> education, List<WorkExperience> workExperiences,
+    public JobSeekerDTO(UUID jobSeekerId, String firstName, String lastName, String email, Address address, String profilePictureUrl,
+                        String linkedInUrl, String resumeUrl, List<String> education, List<WorkExperience> workExperiences,
                         Map<String, JobSeeker.SkillLevel> skills, List<Reference> references) {
         this.jobSeekerId = jobSeekerId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.zipcode = zipcode;
-        this.city = city;
-        this.state = state;
-        this.country = country;
+        this.address = address;
         this.profilePictureUrl = profilePictureUrl;
         this.linkedInUrl = linkedInUrl;
         this.resumeUrl = resumeUrl;
@@ -84,36 +78,12 @@ public class JobSeekerDTO {
         this.email = email;
     }
 
-    public String getZipcode() {
-        return zipcode;
+    public Address getAddress() {
+        return address;
     }
 
-    public void setZipcode(String zipcode) {
-        this.zipcode = zipcode;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     public String getProfilePictureUrl() {
@@ -179,10 +149,7 @@ public class JobSeekerDTO {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
-                ", zipcode='" + zipcode + '\'' +
-                ", city='" + city + '\'' +
-                ", state='" + state + '\'' +
-                ", country='" + country + '\'' +
+                ", address='" + address + '\'' +
                 ", profilePictureUrl='" + profilePictureUrl + '\'' +
                 ", linkedInUrl='" + linkedInUrl + '\'' +
                 ", resumeUrl='" + resumeUrl + '\'' +

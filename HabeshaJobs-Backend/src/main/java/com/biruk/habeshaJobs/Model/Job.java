@@ -1,5 +1,6 @@
 package com.biruk.habeshaJobs.Model;
 
+import com.biruk.habeshaJobs.Model.Common.Address;
 import jakarta.persistence.*;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +22,7 @@ public class Job {
     private String jobTitle;
 
     private double salary;
-    private String location;
+    private Address address;
 
     @Enumerated(EnumType.STRING)
     private JobType jobType;
@@ -50,13 +51,13 @@ public class Job {
 
     //All args constructor
 
-    public Job(UUID jobId, String jobTitle, double salary, String location,
+    public Job(UUID jobId, String jobTitle, double salary, Address address,
                JobType jobType, JobDescription jobDescription, LocalDateTime createdAt,
                LocalDateTime updatedAt, Employer employer, List<JobApplication> jobApplications) {
         this.jobId = jobId;
         this.jobTitle = jobTitle;
         this.salary = salary;
-        this.location = location;
+        this.address = address;
         this.jobType = jobType;
         this.jobDescription = jobDescription;
         this.createdAt = createdAt;
@@ -92,12 +93,12 @@ public class Job {
         this.salary = salary;
     }
 
-    public String getLocation() {
-        return location;
+    public Address address() {
+        return address;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     public JobType getJobType() {
@@ -162,7 +163,7 @@ public class Job {
                 "jobId=" + jobId +
                 ", jobTitle='" + jobTitle + '\'' +
                 ", salary=" + salary +
-                ", location='" + location + '\'' +
+                ", address='" + address + '\'' +
                 ", jobType=" + jobType +
                 ", jobDescription=" + jobDescription +
                 ", createdAt=" + createdAt +

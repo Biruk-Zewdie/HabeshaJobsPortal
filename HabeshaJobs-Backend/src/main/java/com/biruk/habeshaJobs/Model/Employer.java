@@ -31,15 +31,17 @@ public class Employer {
 
     private String industrySector;
     private String description;
-    private LocalDateTime registrationDate;
+    private LocalDateTime registrationDate = LocalDateTime.now();
     private String logoUrl;
     private CompanySize companySize;
+
+    //the purpose of mappedBy in the @OneToMany annotation is to specify the field
 
     @OneToMany(mappedBy = "employer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Job> jobsPosted = new ArrayList<>();
 
     @OneToMany(mappedBy = "employer", cascade = CascadeType.ALL)
-    private List<JobApplication> jobApplications = new ArrayList<> ();     // this will hold the job applications associated with this employer.
+    private List<JobApplication> jobApplications = new ArrayList<> ();     // this will hold the job applications associated with this job.
 
 
     public Employer() {

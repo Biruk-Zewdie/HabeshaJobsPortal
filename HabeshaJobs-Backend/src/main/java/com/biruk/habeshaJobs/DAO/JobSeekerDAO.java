@@ -1,6 +1,6 @@
 package com.biruk.habeshaJobs.DAO;
 
-import com.biruk.habeshaJobs.Model.JobSeeker;
+import com.biruk.habeshaJobs.Model.JobSeeker.JobSeeker;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

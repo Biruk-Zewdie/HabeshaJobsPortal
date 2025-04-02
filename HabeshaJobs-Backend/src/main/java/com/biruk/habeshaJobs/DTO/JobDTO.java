@@ -1,5 +1,6 @@
 package com.biruk.habeshaJobs.DTO;
 
+import com.biruk.habeshaJobs.Model.Common.Address;
 import com.biruk.habeshaJobs.Model.Job;
 import com.biruk.habeshaJobs.Model.JobDescription;
 
@@ -11,7 +12,13 @@ public class JobDTO {
     private UUID jobId;
     private String jobTitle;
     private double salary;
-    private String location;
+
+    /*
+    might be useful for recommending jobs to job seekers based on their location.
+    Including the address field can be useful even if I already have an address in employerDTO.
+    The reason is that the job itself might be located in a different place than the employer's address.
+     */
+    private Address address;
     private Job.JobType jobType;
     private JobDescription jobDescription;
     private LocalDateTime createdAt;
@@ -22,13 +29,13 @@ public class JobDTO {
 
     }
 
-    public JobDTO(UUID jobId, String jobTitle, double salary, String location, Job.JobType jobType,
+    public JobDTO(UUID jobId, String jobTitle, double salary, Address address, Job.JobType jobType,
                   JobDescription jobDescription, LocalDateTime createdAt, EmployerDTO employerDTO) {
 
         this.jobId = jobId;
         this.jobTitle = jobTitle;
         this.salary = salary;
-        this.location = location;
+        this.address = address;
         this.jobType = jobType;
         this.jobDescription = jobDescription;
         this.createdAt = createdAt;
@@ -59,12 +66,12 @@ public class JobDTO {
         this.salary = salary;
     }
 
-    public String getLocation() {
-        return location;
+    public Address getAddress() {
+        return address;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     public Job.JobType getJobType() {
@@ -106,7 +113,7 @@ public class JobDTO {
                 "jobId=" + jobId +
                 ", jobTitle='" + jobTitle + '\'' +
                 ", salary=" + salary +
-                ", location='" + location + '\'' +
+                ", address='" + address + '\'' +
                 ", jobType=" + jobType +
                 ", jobDescription=" + jobDescription +
                 ", createdAt=" + createdAt +

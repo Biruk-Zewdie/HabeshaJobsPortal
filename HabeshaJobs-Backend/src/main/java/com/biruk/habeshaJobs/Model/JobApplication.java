@@ -1,13 +1,18 @@
 package com.biruk.habeshaJobs.Model;
 
+import com.biruk.habeshaJobs.Model.JobSeeker.JobSeeker;
 import jakarta.persistence.*;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 
 /*
-- this class breakdown many to many relationship between Job and JobSeekers into one to many to each other.
+- this class breakdown many to many relationship between
+        - Job and JobSeeker
+        - JobSeekers and employer into one to many to each other.
+        - Also handles one to many relationship between Employer and jobSeeker.
 - A job can have multiple job seekers applying for it and a A job seeker can apply for multiple jobs.
 - This class can also be used to store additional information about the application, such as the date of application, status of the application
 (e.g., pending, accepted, rejected), etc.
@@ -17,6 +22,7 @@ import java.util.UUID;
 - to track the number of jobSeekers applied for a specific job or the number of jobs applied for  )
 */
 
+@Component
 @Entity
 public class JobApplication {
 
@@ -35,9 +41,11 @@ public class JobApplication {
     @JoinColumn(name = "job_Seeker_id")
     private JobSeeker jobSeeker; // this will create a many to one relationship with the JobSeeker entity, indicating that multiple job applications can be associated with a single job seeker.
 
-//    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    @JoinColumn(name = "employer_Id")
-//    private Employer employer; // this will hold the reference to the employer who posted the job. This can be used to track which employer the job application is associated with.
+    //This field helps as to track the number of job applications submitted for a specific employer
+    // this might be useful to calculate the total number of jobSeekers applied for all jobs posted by a specific employer or to calculate the price the employer should pay based on the number of applications received for a job posting.
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "employer_Id")
+    private Employer employer; // this will hold the reference to the employer who posted the job. This can be used to track which employer the job application is associated with.
 
     @Enumerated(EnumType.STRING)
     private ApplicationStatus status;
@@ -105,7 +113,7 @@ public class JobApplication {
 
     @Override
     public String toString() {
-        return "JobApplication{" +
+        return "JobApplicationDAO{" +
                 "jobApplicationId=" + jobApplicationId +
                 ", applicationDate=" + applicationDate +
                 ", job=" + job +
