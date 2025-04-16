@@ -1,4 +1,4 @@
-package com.biruk.habeshaJobs.Model;
+package com.biruk.habeshaJobs.Model.Job;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.ElementCollection;

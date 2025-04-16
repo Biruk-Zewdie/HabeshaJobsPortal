@@ -1,6 +1,8 @@
-package com.biruk.habeshaJobs.Model;
+package com.biruk.habeshaJobs.Model.Job;
 
 import com.biruk.habeshaJobs.Model.Common.Address;
+import com.biruk.habeshaJobs.Model.Employer;
+import com.biruk.habeshaJobs.Model.JobApplication;
 import jakarta.persistence.*;
 import org.springframework.stereotype.Component;
 

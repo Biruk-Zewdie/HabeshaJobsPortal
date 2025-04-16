@@ -11,7 +11,7 @@ public class EmployerDTO {
     private String companyName;
     private String email;
     private Address address;
-    private String Description;
+    private String description;
     private String industrySector;
     private String logoUrl;
     private String companySize;
@@ -27,7 +27,7 @@ public class EmployerDTO {
         this.companyName = companyName;
         this.email = email;
         this.address = address;
-        Description = description;
+        this.description = description;
         this.industrySector = industrySector;
         this.logoUrl = logoUrl;
         this.companySize = companySize;
@@ -67,11 +67,11 @@ public class EmployerDTO {
     }
 
     public String getDescription() {
-        return Description;
+        return description;
     }
 
     public void setDescription(String description) {
-        Description = description;
+        this.description = description;
     }
 
     public String getIndustrySector() {
@@ -113,7 +113,7 @@ public class EmployerDTO {
                 ", companyName='" + companyName + '\'' +
                 ", email='" + email + '\'' +
                 ", address=" + address +
-                ", Description='" + Description + '\'' +
+                ", description='" + description + '\'' +
                 ", industrySector='" + industrySector + '\'' +
                 ", logoUrl='" + logoUrl + '\'' +
                 ", companySize='" + companySize + '\'' +

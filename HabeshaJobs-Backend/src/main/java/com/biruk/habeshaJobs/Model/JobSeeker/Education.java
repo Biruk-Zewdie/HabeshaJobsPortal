@@ -1,6 +1,7 @@
 package com.biruk.habeshaJobs.Model.JobSeeker;
 
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.Enumerated;
 
 import java.time.LocalDate;
 
@@ -26,6 +27,7 @@ public class Education {
         this.GPA = GPA;
     }
 
+    @Enumerated
     public Degree getDegree() {
         return degree;
     }

@@ -1,8 +1,8 @@
 package com.biruk.habeshaJobs.DTO;
 
 import com.biruk.habeshaJobs.Model.Common.Address;
-import com.biruk.habeshaJobs.Model.Job;
-import com.biruk.habeshaJobs.Model.JobDescription;
+import com.biruk.habeshaJobs.Model.Job.Job;
+import com.biruk.habeshaJobs.Model.Job.JobDescription;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

@@ -1,6 +1,8 @@
 package com.biruk.habeshaJobs.Model;
 
 import com.biruk.habeshaJobs.Model.Common.Address;
+import com.biruk.habeshaJobs.Model.Job.Job;
+import com.biruk.habeshaJobs.Model.User.User;
 import jakarta.persistence.*;
 import org.springframework.stereotype.Component;
 
@@ -22,10 +24,6 @@ public class Employer {
     @Column(nullable = false)
     private String companyName;
 
-    @Column(nullable = false)
-    private String email;
-    private String password;
-
     @Embedded
     private Address address;
 
@@ -43,18 +41,19 @@ public class Employer {
     @OneToMany(mappedBy = "employer", cascade = CascadeType.ALL)
     private List<JobApplication> jobApplications = new ArrayList<> ();     // this will hold the job applications associated with this job.
 
+    @OneToOne
+    @JoinColumn(name = "userId", nullable = false)
+    private User user;
 
     public Employer() {
     }
 
-    public Employer(UUID employerId, String companyName, String email, String password, Address address,
-                    String industrySector, String description, LocalDateTime registrationDate, String logoUrl,
-                    CompanySize companySize, List<Job> jobsPosted, List <JobApplication> jobApplications) {
+    public Employer(UUID employerId, String companyName, Address address, String industrySector, String description,
+                    LocalDateTime registrationDate, String logoUrl, CompanySize companySize, List<Job> jobsPosted,
+                    List <JobApplication> jobApplications) {
 
         this.employerId = employerId;
         this.companyName = companyName;
-        this.email = email;
-        this.password = password;
         this.address = address;
         this.industrySector = industrySector;
         this.description = description;
@@ -79,22 +78,6 @@ public class Employer {
 
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public Address getAddress() {
@@ -172,8 +155,6 @@ public class Employer {
         return "Employer{" +
                 "employerId=" + employerId +
                 ", companyName='" + companyName + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
                 ", address=" + address +
                 ", industrySector='" + industrySector + '\'' +
                 ", description='" + description + '\'' +

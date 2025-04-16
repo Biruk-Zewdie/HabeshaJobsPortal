@@ -1,6 +1,7 @@
 package com.biruk.habeshaJobs.DTO;
 
 import com.biruk.habeshaJobs.Model.Common.Address;
+import com.biruk.habeshaJobs.Model.JobSeeker.Education;
 import com.biruk.habeshaJobs.Model.JobSeeker.JobSeeker;
 import com.biruk.habeshaJobs.Model.JobSeeker.Reference;
 import com.biruk.habeshaJobs.Model.JobSeeker.WorkExperience;
@@ -20,7 +21,7 @@ public class JobSeekerDTO {
     private String profilePictureUrl;
     private String linkedInUrl;
     private String resumeUrl;
-    private List<String> education;
+    private List<Education> education;
     private List<WorkExperience> workExperiences;
     private Map<String, JobSeeker.SkillLevel> skills;
     private List <Reference> references;
@@ -29,7 +30,7 @@ public class JobSeekerDTO {
     }
 
     public JobSeekerDTO(UUID jobSeekerId, String firstName, String lastName, String email, Address address, String profilePictureUrl,
-                        String linkedInUrl, String resumeUrl, List<String> education, List<WorkExperience> workExperiences,
+                        String linkedInUrl, String resumeUrl, List<Education> education, List<WorkExperience> workExperiences,
                         Map<String, JobSeeker.SkillLevel> skills, List<Reference> references) {
         this.jobSeekerId = jobSeekerId;
         this.firstName = firstName;
@@ -110,11 +111,11 @@ public class JobSeekerDTO {
         this.resumeUrl = resumeUrl;
     }
 
-    public List<String> getEducation() {
+    public List<Education> getEducation() {
         return education;
     }
 
-    public void setEducation(List<String> education) {
+    public void setEducation(List<Education> education) {
         this.education = education;
     }
 

@@ -1,14 +1,14 @@
 package com.biruk.habeshaJobs.DTO;
 
-public class JobSeekerLoginDTO {
+public class UserLoginDTO {
 
     private String email;
     private String password;
 
-    public JobSeekerLoginDTO() {
+    public UserLoginDTO() {
     }
 
-    public JobSeekerLoginDTO(String email, String password) {
+    public UserLoginDTO(String email, String password) {
         this.email = email;
         this.password = password;
     }
@@ -31,7 +31,7 @@ public class JobSeekerLoginDTO {
 
     @Override
     public String toString() {
-        return "JobSeekerLoginDTO{" +
+        return "UserLoginDTO{" +
                 "email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 '}';

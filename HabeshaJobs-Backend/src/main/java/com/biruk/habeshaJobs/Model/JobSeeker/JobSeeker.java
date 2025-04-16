@@ -2,6 +2,7 @@ package com.biruk.habeshaJobs.Model.JobSeeker;
 
 import com.biruk.habeshaJobs.Model.Common.Address;
 import com.biruk.habeshaJobs.Model.JobApplication;
+import com.biruk.habeshaJobs.Model.User.User;
 import jakarta.persistence.*;
 import org.springframework.stereotype.Component;
 
@@ -27,8 +28,6 @@ public class JobSeeker {
     @Column (nullable = false)
     private String phoneNumber;
 
-    @Column(nullable = false, unique = true)
-    private String email;
 
     private LocalDate dateOfBirth;
 
@@ -36,11 +35,9 @@ public class JobSeeker {
     private Address address;
 
 
-    private String password;
-
     @ElementCollection
     @CollectionTable(name = "jobSeeker_education", joinColumns = @JoinColumn(name = "jobSeekerId"))
-    private List<Education> education;
+    private List<Education> education = new ArrayList<>();
 //    private List<String> skill;
 
     private String profilePictureUrl;
@@ -61,33 +58,36 @@ public class JobSeeker {
     private String resumeUrl;
 
     @ElementCollection
+    @CollectionTable (name = "jobSeeker_workExperience", joinColumns = @JoinColumn(name = "jobSeekerId"))
     private List<WorkExperience> workExperiences = new ArrayList<>();
 
-    @ ElementCollection
+    @ElementCollection
+    @CollectionTable(name = "jobSeeker_Reference", joinColumns = @JoinColumn(name = "jobSeekerId"))
     private List<Reference> references = new ArrayList<>();
 
 
     @OneToMany (mappedBy = "jobSeeker", cascade = CascadeType.ALL)
     private List <JobApplication> jobApplication = new ArrayList<> ();
 
+    @OneToOne
+    @JoinColumn (name = "userId", nullable = false)
+    private User user;
 
 
     public JobSeeker() {
 
     }
 
-    public JobSeeker(UUID jobSeekerId, String firstName, String lastName, String phoneNumber, String email, LocalDate dateOfBirth,
-                     Address address, String password, List<Education> education, String profilePictureUrl, IsActiveJobSeeker isActiveJobSeeker,
+    public JobSeeker(UUID jobSeekerId, String firstName, String lastName, String phoneNumber, LocalDate dateOfBirth,
+                     Address address, List<Education> education, String profilePictureUrl, IsActiveJobSeeker isActiveJobSeeker,
                      String linkedInUrl, Map<String, SkillLevel> skills, LocalDateTime dateOfJoining, String resumeUrl,
                      List<WorkExperience> workExperiences, List<Reference> references, List <JobApplication> jobApplication) {
         this.jobSeekerId = jobSeekerId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
-        this.email = email;
         this.dateOfBirth = dateOfBirth;
         this.address = address;
-        this.password = password;
         this.education = education;
         this.profilePictureUrl = profilePictureUrl;
         this.isActiveJobSeeker = isActiveJobSeeker;
@@ -132,14 +132,6 @@ public class JobSeeker {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
@@ -154,14 +146,6 @@ public class JobSeeker {
 
     public void setAddress (Address address) {
         this.address = address;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public List<Education> getEducation() {
@@ -264,10 +248,8 @@ public class JobSeeker {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
-                ", email='" + email + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
                 ", address='" + address + '\'' +
-                ", password='" + password + '\'' +
                 ", education=" + education +
                 ", profilePictureUrl='" + profilePictureUrl + '\'' +
                 ", isActiveJobSeeker=" + isActiveJobSeeker +
@@ -279,8 +261,6 @@ public class JobSeeker {
                 ", references=" + references +
                 '}';
     }
-
-
 }
 
 
