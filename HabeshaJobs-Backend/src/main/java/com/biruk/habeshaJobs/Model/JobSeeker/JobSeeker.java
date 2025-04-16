@@ -37,7 +37,10 @@ public class JobSeeker {
 
 
     private String password;
-    private List<String> education;
+
+    @ElementCollection
+    @CollectionTable(name = "jobSeeker_education", joinColumns = @JoinColumn(name = "jobSeekerId"))
+    private List<Education> education;
 //    private List<String> skill;
 
     private String profilePictureUrl;
@@ -74,7 +77,7 @@ public class JobSeeker {
     }
 
     public JobSeeker(UUID jobSeekerId, String firstName, String lastName, String phoneNumber, String email, LocalDate dateOfBirth,
-                     Address address, String password, List<String> education, String profilePictureUrl, IsActiveJobSeeker isActiveJobSeeker,
+                     Address address, String password, List<Education> education, String profilePictureUrl, IsActiveJobSeeker isActiveJobSeeker,
                      String linkedInUrl, Map<String, SkillLevel> skills, LocalDateTime dateOfJoining, String resumeUrl,
                      List<WorkExperience> workExperiences, List<Reference> references, List <JobApplication> jobApplication) {
         this.jobSeekerId = jobSeekerId;
@@ -161,11 +164,11 @@ public class JobSeeker {
         this.password = password;
     }
 
-    public List<String> getEducation() {
+    public List<Education> getEducation() {
         return education;
     }
 
-    public void setEducation(List<String> education) {
+    public void setEducation(List<Education> education) {
         this.education = education;
     }
 
@@ -276,6 +279,8 @@ public class JobSeeker {
                 ", references=" + references +
                 '}';
     }
+
+
 }
 
 

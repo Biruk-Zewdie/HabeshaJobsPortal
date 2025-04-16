@@ -10,8 +10,8 @@ import java.util.UUID;
 
 /*
 - this class breakdown many to many relationship between
-        - Job and JobSeeker
-        - JobSeekers and employer into one to many to each other.
+        - Job and JobSeeker (many jobSeekers can apply for many jobs)
+        - JobSeekers and employer (many jobSeekers can apply for many employers) into one to many to each other.
         - Also handles one to many relationship between Employer and jobSeeker.
 - A job can have multiple job seekers applying for it and a A job seeker can apply for multiple jobs.
 - This class can also be used to store additional information about the application, such as the date of application, status of the application

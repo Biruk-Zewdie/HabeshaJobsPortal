@@ -9,7 +9,7 @@ import java.util.List;
 public class WorkExperience {
 
     private String companyName;
-    private String JobTitle;
+    private String jobTitle;
     private LocalDate startDate;
     private LocalDate endDate;
     private List<String> responsibilities;
@@ -21,7 +21,7 @@ public class WorkExperience {
 
     public WorkExperience(String companyName, String jobTitle, LocalDate startDate, LocalDate endDate, List<String> responsibilities, String achievements) {
         this.companyName = companyName;
-        JobTitle = jobTitle;
+        this.jobTitle = jobTitle;
         this.startDate = startDate;
         this.endDate = endDate;
         this.responsibilities = responsibilities;
@@ -37,11 +37,11 @@ public class WorkExperience {
     }
 
     public String getJobTitle() {
-        return JobTitle;
+        return jobTitle;
     }
 
     public void setJobTitle(String jobTitle) {
-        JobTitle = jobTitle;
+        this.jobTitle = jobTitle;
     }
 
     public LocalDate getStartDate() {
@@ -80,7 +80,7 @@ public class WorkExperience {
     public String toString() {
         return "WorkExperience{" +
                 "companyName='" + companyName + '\'' +
-                ", JobTitle='" + JobTitle + '\'' +
+                ", jobTitle='" + jobTitle + '\'' +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
                 ", responsibilities=" + responsibilities +
