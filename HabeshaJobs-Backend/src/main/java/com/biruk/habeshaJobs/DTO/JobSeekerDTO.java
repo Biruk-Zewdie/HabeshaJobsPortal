@@ -1,6 +1,7 @@
 package com.biruk.habeshaJobs.DTO;
 
 import com.biruk.habeshaJobs.Model.Common.Address;
+import com.biruk.habeshaJobs.Model.Employer;
 import com.biruk.habeshaJobs.Model.JobSeeker.Education;
 import com.biruk.habeshaJobs.Model.JobSeeker.JobSeeker;
 import com.biruk.habeshaJobs.Model.JobSeeker.Reference;
@@ -29,9 +30,34 @@ public class JobSeekerDTO {
     public JobSeekerDTO() {
     }
 
-    public JobSeekerDTO(UUID jobSeekerId, String firstName, String lastName, String email, Address address, String profilePictureUrl,
-                        String linkedInUrl, String resumeUrl, List<Education> education, List<WorkExperience> workExperiences,
-                        Map<String, JobSeeker.SkillLevel> skills, List<Reference> references) {
+    /*
+     * Object based constructor
+     * This constructor is used when we already have a JobSeeker object and we want to convert it into a DTO easily.
+     * see this in use in get all job seekers method in JobSeekerServiceImpl
+    * */
+    public JobSeekerDTO(JobSeeker jobSeeker) {
+        this.jobSeekerId = jobSeeker.getJobSeekerId();
+        this.firstName = jobSeeker.getFirstName();
+        this.lastName = jobSeeker.getLastName();
+        this.email = jobSeeker.getUser().getEmail();
+        this.address = jobSeeker.getAddress();
+        this.profilePictureUrl = jobSeeker.getProfilePictureUrl();
+        this.linkedInUrl = jobSeeker.getLinkedInUrl();
+        this.resumeUrl = jobSeeker.getResumeUrl();
+        this.education = jobSeeker.getEducation();
+        this.workExperiences = jobSeeker.getWorkExperiences();
+        this.skills = jobSeeker.getSkills();
+        this.references = jobSeeker.getReferences();
+    }
+
+    /*
+    * Field based constructor
+    * used when we want to build a DTO from selected fields (partial data from the job seeker) OR
+    * when you are in a method that deals with individual field values like register job seeker method in AuthService).
+    * savedJobSeeker.getUser().getEmail() - this is nested, so we are assembling it piece by piece.
+    * */
+
+    public JobSeekerDTO(UUID jobSeekerId, String firstName, String lastName, String email, Address address, String profilePictureUrl, String linkedInUrl, String resumeUrl, List<Education> education, List<WorkExperience> workExperiences, Map<String, JobSeeker.SkillLevel> skills, List<Reference> references) {
         this.jobSeekerId = jobSeekerId;
         this.firstName = firstName;
         this.lastName = lastName;

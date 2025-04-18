@@ -50,7 +50,7 @@ public class Employer {
 
     public Employer(UUID employerId, String companyName, Address address, String industrySector, String description,
                     LocalDateTime registrationDate, String logoUrl, CompanySize companySize, List<Job> jobsPosted,
-                    List <JobApplication> jobApplications) {
+                    List <JobApplication> jobApplications, User user) {
 
         this.employerId = employerId;
         this.companyName = companyName;
@@ -62,6 +62,7 @@ public class Employer {
         this.companySize = companySize;
         this.jobsPosted = jobsPosted;
         this.jobApplications = jobApplications;
+        this.user = user;
     }
 
     public UUID getEmployerId() {
@@ -144,6 +145,14 @@ public class Employer {
         this.jobApplications = jobApplications;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser (User user){
+        this.user = user;
+    }
+
     public enum CompanySize{
         Small,
         Medium,
@@ -163,6 +172,7 @@ public class Employer {
                 ", companySize=" + companySize +
                 ", jobsPosted=" + jobsPosted +
                 ", jobApplications=" + jobApplications +
+                ", user=" + user +
                 '}';
     }
 }

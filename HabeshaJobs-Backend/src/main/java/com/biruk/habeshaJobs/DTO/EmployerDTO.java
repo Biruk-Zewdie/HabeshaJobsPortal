@@ -1,6 +1,7 @@
 package com.biruk.habeshaJobs.DTO;
 
 import com.biruk.habeshaJobs.Model.Common.Address;
+import com.biruk.habeshaJobs.Model.Employer;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -14,24 +15,24 @@ public class EmployerDTO {
     private String description;
     private String industrySector;
     private String logoUrl;
-    private String companySize;
+    private Employer.CompanySize companySize;
     private LocalDateTime registrationDate;
+
 
     public EmployerDTO() {
 
     }
 
-    public EmployerDTO(UUID employerId, String companyName, String email, Address address, String description,
-                       String industrySector, String logoUrl, String companySize, LocalDateTime registrationDate) {
-        this.employerId = employerId;
-        this.companyName = companyName;
-        this.email = email;
-        this.address = address;
-        this.description = description;
-        this.industrySector = industrySector;
-        this.logoUrl = logoUrl;
-        this.companySize = companySize;
-        this.registrationDate = registrationDate;
+    public EmployerDTO(Employer employer) {
+        this.employerId = employer.getEmployerId();
+        this.companyName = employer.getCompanyName();
+        this.email = employer.getUser().getEmail();
+        this.address = employer.getAddress();
+        this.description = employer.getDescription();
+        this.industrySector = employer.getIndustrySector();
+        this.logoUrl = employer.getLogoUrl();
+        this.companySize = employer.getCompanySize();
+        this.registrationDate = employer.getRegistrationDate();
     }
 
     public UUID getEmployerId() {
@@ -90,11 +91,11 @@ public class EmployerDTO {
         this.logoUrl = logoUrl;
     }
 
-    public String getCompanySize() {
+    public Employer.CompanySize getCompanySize() {
         return companySize;
     }
 
-    public void setCompanySize(String companySize) {
+    public void setCompanySize(Employer.CompanySize companySize) {
         this.companySize = companySize;
     }
 

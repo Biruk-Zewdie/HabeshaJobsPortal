@@ -39,7 +39,7 @@ public class User {
     public enum Role{
         JobSeeker,
         Employer,
-        Admin
+        //Admin
     }
 
     public User () {

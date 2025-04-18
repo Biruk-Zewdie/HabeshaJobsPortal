@@ -81,7 +81,7 @@ public class JobSeeker {
     public JobSeeker(UUID jobSeekerId, String firstName, String lastName, String phoneNumber, LocalDate dateOfBirth,
                      Address address, List<Education> education, String profilePictureUrl, IsActiveJobSeeker isActiveJobSeeker,
                      String linkedInUrl, Map<String, SkillLevel> skills, LocalDateTime dateOfJoining, String resumeUrl,
-                     List<WorkExperience> workExperiences, List<Reference> references, List <JobApplication> jobApplication) {
+                     List<WorkExperience> workExperiences, List<Reference> references, List <JobApplication> jobApplication, User user) {
         this.jobSeekerId = jobSeekerId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -98,6 +98,7 @@ public class JobSeeker {
         this.workExperiences = workExperiences;
         this.references = references;
         this.jobApplication = jobApplication;
+        this.user = user;
     }
 
     public UUID getJobSeekerId() {
@@ -228,6 +229,13 @@ public class JobSeeker {
         this.jobApplication = jobApplication;
     }
 
+    public User getUser() {
+        return user;
+    }
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     //Employment Status Enum
     public enum IsActiveJobSeeker {
         Yes,
@@ -259,6 +267,8 @@ public class JobSeeker {
                 ", resumeUrl='" + resumeUrl + '\'' +
                 ", workExperiences=" + workExperiences +
                 ", references=" + references +
+                ", jobApplication=" + jobApplication +
+                ", user=" + user +
                 '}';
     }
 }
