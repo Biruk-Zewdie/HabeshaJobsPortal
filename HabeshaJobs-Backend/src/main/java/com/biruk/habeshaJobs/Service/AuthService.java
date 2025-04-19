@@ -45,8 +45,8 @@ public class AuthService {
     String passwordPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+?',])[A-Za-z\\d!@#$%^&*()_+?',]{8,}$";
 
 
-    public JobSeekerDTO registerJobSeeker (JobSeekerRegistrationDTO dto) {
-        UserRegistrationDTO userDTO = dto.getUser();
+    public OutgoingJobSeekerDTO registerJobSeeker (IncomingJobSeekerRegistrationDTO dto) {
+        IncomingUserRegistrationDTO userDTO = dto.getUser();
 
         String jobSeekerEmail = userDTO.getEmail();
         String jobSeekerPassword = userDTO.getPassword();
@@ -83,10 +83,10 @@ public class AuthService {
         }
 
         try{
-            // create a new user instance and set the user properties with the data we get from the client(UserRegistrationDTO).
+            // create a new user instance and set the user properties with the data we get from the client(IncomingUserRegistrationDTO).
             User user = new User(userDTO.getEmail(), userDTO.getPassword(), userDTO.getRole());
 
-            // create a new jobSeeker instance and set the jobSeeker properties with the data we get from the client(JobSeekerRegistrationDTO).
+            // create a new jobSeeker instance and set the jobSeeker properties with the data we get from the client(IncomingJobSeekerRegistrationDTO).
             JobSeeker jobSeeker = new JobSeeker();
 
             jobSeeker.setFirstName(dto.getFirstName());
@@ -107,14 +107,14 @@ public class AuthService {
             JobSeeker savedJobSeeker = jobSeekerDAO.save(jobSeeker);
 
             // Now we need to return the jobSeekerDTO to the client
-            return new JobSeekerDTO(savedJobSeeker);
+            return new OutgoingJobSeekerDTO(savedJobSeeker);
 
         }catch(DataIntegrityViolationException e){
             throw new RuntimeException("failed to register JobSeeker: " + e.getMessage(), e);
         }
     }
 
-    public Object login (UserLoginDTO userLoginDTO) {
+    public Object login (IncomingUserLoginDTO userLoginDTO) {
 
         // .isBlank() checks if the string is empty or contains only whitespace.
         if (userLoginDTO.getEmail() == null || userLoginDTO.getEmail().isBlank()){
@@ -152,7 +152,7 @@ public class AuthService {
                         () -> new IllegalArgumentException("user not found with the given email and password"));
 
         return switch (returnedUser.getRole()) {
-            case JobSeeker -> new JobSeekerDTO(returnedUser.getJobSeeker());
+            case JobSeeker -> new OutgoingJobSeekerDTO(returnedUser.getJobSeeker());
             case Employer -> new EmployerDTO(returnedUser.getEmployer());
             default -> throw new IllegalStateException("Unexpected value: " + returnedUser.getRole());
         };

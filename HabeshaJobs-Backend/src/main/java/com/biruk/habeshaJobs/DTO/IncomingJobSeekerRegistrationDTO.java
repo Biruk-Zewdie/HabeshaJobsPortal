@@ -5,13 +5,11 @@ import com.biruk.habeshaJobs.Model.JobSeeker.Education;
 import com.biruk.habeshaJobs.Model.JobSeeker.JobSeeker;
 import com.biruk.habeshaJobs.Model.JobSeeker.Reference;
 import com.biruk.habeshaJobs.Model.JobSeeker.WorkExperience;
-import com.biruk.habeshaJobs.Model.User.User;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /*
 * previously I have used jobSeeker entity as an input for registering a job seeker. This makes the code
@@ -29,7 +27,7 @@ import java.util.UUID;
 * List<JobApplication> jobApplication - this is filled by the app after registration if the job seeker applies for a job
 * */
 
-public class JobSeekerRegistrationDTO {
+public class IncomingJobSeekerRegistrationDTO {
 
 
     private String firstName;
@@ -44,15 +42,15 @@ public class JobSeekerRegistrationDTO {
     private MultipartFile resumeFile;           //could be .pdf, .docx, .txt
     private List<WorkExperience> workExperiences;
     private List<Reference> references;
-    private UserRegistrationDTO user;
+    private IncomingUserRegistrationDTO user;
 
-    public JobSeekerRegistrationDTO() {
+    public IncomingJobSeekerRegistrationDTO() {
     }
 
-    public JobSeekerRegistrationDTO (String firstName, String lastName, String phoneNumber, LocalDate dateOfBirth, Address address,
-                                    List<Education> education, MultipartFile profilePicture, String linkedInUrl,
-                                    Map<String, JobSeeker.SkillLevel> skills, MultipartFile resumeFile,
-                                    List<WorkExperience> workExperiences, List<Reference> references, UserRegistrationDTO user) {
+    public IncomingJobSeekerRegistrationDTO(String firstName, String lastName, String phoneNumber, LocalDate dateOfBirth, Address address,
+                                            List<Education> education, MultipartFile profilePicture, String linkedInUrl,
+                                            Map<String, JobSeeker.SkillLevel> skills, MultipartFile resumeFile,
+                                            List<WorkExperience> workExperiences, List<Reference> references, IncomingUserRegistrationDTO user) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
@@ -164,17 +162,17 @@ public class JobSeekerRegistrationDTO {
         this.references = references;
     }
 
-    public UserRegistrationDTO getUser() {
+    public IncomingUserRegistrationDTO getUser() {
         return user;
     }
 
-    public void setUser(UserRegistrationDTO user) {
+    public void setUser(IncomingUserRegistrationDTO user) {
         this.user = user;
     }
 
     @Override
     public String toString() {
-        return "JobSeekerRegistrationDTO{" +
+        return "IncomingJobSeekerRegistrationDTO{" +
                 "firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +

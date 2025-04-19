@@ -1,7 +1,6 @@
 package com.biruk.habeshaJobs.DTO;
 
 import com.biruk.habeshaJobs.Model.Common.Address;
-import com.biruk.habeshaJobs.Model.Employer;
 import com.biruk.habeshaJobs.Model.JobSeeker.Education;
 import com.biruk.habeshaJobs.Model.JobSeeker.JobSeeker;
 import com.biruk.habeshaJobs.Model.JobSeeker.Reference;
@@ -12,7 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class JobSeekerDTO {
+// This class is used to send data of the job seeker from the server to the client after the job seeker is registered or logged in.
+
+public class OutgoingJobSeekerDTO {
 
 
     private UUID jobSeekerId;
@@ -29,7 +30,7 @@ public class JobSeekerDTO {
     private Map<String, JobSeeker.SkillLevel> skills;
     private List <Reference> references;
 
-    public JobSeekerDTO() {
+    public OutgoingJobSeekerDTO() {
     }
 
     /*
@@ -37,7 +38,7 @@ public class JobSeekerDTO {
      * This constructor is used when we already have a JobSeeker object and we want to convert it into a DTO easily.
      * see this in use in get all job seekers method in JobSeekerServiceImpl
     * */
-    public JobSeekerDTO(JobSeeker jobSeeker) {
+    public OutgoingJobSeekerDTO(JobSeeker jobSeeker) {
         this.jobSeekerId = jobSeeker.getJobSeekerId();
         this.firstName = jobSeeker.getFirstName();
         this.lastName = jobSeeker.getLastName();
@@ -60,7 +61,7 @@ public class JobSeekerDTO {
     * savedJobSeeker.getUser().getEmail() - this is nested, so we are assembling it piece by piece.
     * */
 
-    public JobSeekerDTO(UUID jobSeekerId, String firstName, String lastName, String email, User.Role role, Address address, String profilePictureUrl, String linkedInUrl, String resumeUrl, List<Education> education, List<WorkExperience> workExperiences, Map<String, JobSeeker.SkillLevel> skills, List<Reference> references) {
+    public OutgoingJobSeekerDTO(UUID jobSeekerId, String firstName, String lastName, String email, User.Role role, Address address, String profilePictureUrl, String linkedInUrl, String resumeUrl, List<Education> education, List<WorkExperience> workExperiences, Map<String, JobSeeker.SkillLevel> skills, List<Reference> references) {
         this.jobSeekerId = jobSeekerId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -183,7 +184,7 @@ public class JobSeekerDTO {
 
     @Override
     public String toString() {
-        return "JobSeekerDTO{" +
+        return "OutgoingJobSeekerDTO{" +
                 "jobSeekerId=" + jobSeekerId +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +

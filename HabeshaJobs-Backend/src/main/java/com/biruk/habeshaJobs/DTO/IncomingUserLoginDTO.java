@@ -1,18 +1,18 @@
 package com.biruk.habeshaJobs.DTO;
 
 /*
-The purpose of UserLoginDTO is to transfer user auth data (email and password) from the client to the server
+The purpose of IncomingUserLoginDTO is to transfer user auth data (email and password) from the client to the server
 in order to authenticate (compare the data with the database) the user.
  */
-public class UserLoginDTO {
+public class IncomingUserLoginDTO {
 
     private String email;
     private String password;
 
-    public UserLoginDTO() {
+    public IncomingUserLoginDTO() {
     }
 
-    public UserLoginDTO(String email, String password) {
+    public IncomingUserLoginDTO(String email, String password) {
         this.email = email;
         this.password = password;
     }
@@ -35,7 +35,7 @@ public class UserLoginDTO {
 
     @Override
     public String toString() {
-        return "UserLoginDTO{" +
+        return "IncomingUserLoginDTO{" +
                 "email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 '}';

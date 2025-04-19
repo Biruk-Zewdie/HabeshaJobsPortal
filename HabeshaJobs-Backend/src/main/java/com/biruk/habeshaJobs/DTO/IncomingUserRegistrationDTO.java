@@ -2,16 +2,16 @@ package com.biruk.habeshaJobs.DTO;
 
 import com.biruk.habeshaJobs.Model.User.User;
 
-public class UserRegistrationDTO {
+public class IncomingUserRegistrationDTO {
 
     private String email;
     private String password;
     private User.Role role;
 
-    public UserRegistrationDTO() {
+    public IncomingUserRegistrationDTO() {
     }
 
-    public UserRegistrationDTO(String email, String password, User.Role role) {
+    public IncomingUserRegistrationDTO(String email, String password, User.Role role) {
         this.email = email;
         this.password = password;
         this.role = role;
@@ -43,7 +43,7 @@ public class UserRegistrationDTO {
 
     @Override
     public String toString() {
-        return "UserRegistrationDTO{" +
+        return "IncomingUserRegistrationDTO{" +
                 "email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", role=" + role +
