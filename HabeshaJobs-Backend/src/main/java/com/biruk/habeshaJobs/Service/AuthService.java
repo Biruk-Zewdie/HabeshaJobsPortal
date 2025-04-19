@@ -68,7 +68,7 @@ public class AuthService {
         }
 
         // check if the email is already exists in the database because it is unique user identifier.
-        if (jobSeekerDAO.findByEmail(jobSeekerEmail).isPresent()){
+        if (userDAO.findByEmail(jobSeekerEmail).isPresent()){
             throw new EmailAlreadyExistsException("Email " + jobSeekerEmail + " already exists");
         }
 

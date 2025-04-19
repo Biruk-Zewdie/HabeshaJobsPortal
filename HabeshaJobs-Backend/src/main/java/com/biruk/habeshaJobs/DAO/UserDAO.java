@@ -10,5 +10,7 @@ import java.util.UUID;
 @Repository
 public interface UserDAO extends JpaRepository<User, UUID> {
 
+    public Optional<User> findByEmail(String email);
+
     public Optional<User> findByEmailAndPassword(String email, String password);
 }
