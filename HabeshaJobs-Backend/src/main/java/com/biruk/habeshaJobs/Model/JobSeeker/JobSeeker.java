@@ -53,7 +53,7 @@ public class JobSeeker {
     private Map<String, SkillLevel> skills = new HashMap<>();
 
     //these are used to track the jobSeeker date of sign up
-    private LocalDateTime dateOfJoining;
+    private LocalDateTime dateOfJoining = LocalDateTime.now();
 
     private String resumeUrl;
 

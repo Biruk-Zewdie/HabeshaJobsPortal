@@ -6,6 +6,7 @@ import com.biruk.habeshaJobs.Model.JobSeeker.Education;
 import com.biruk.habeshaJobs.Model.JobSeeker.JobSeeker;
 import com.biruk.habeshaJobs.Model.JobSeeker.Reference;
 import com.biruk.habeshaJobs.Model.JobSeeker.WorkExperience;
+import com.biruk.habeshaJobs.Model.User.User;
 
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ public class JobSeekerDTO {
     private String firstName;
     private String lastName;
     private String email;
+    private User.Role role;
     private Address address;
     private String profilePictureUrl;
     private String linkedInUrl;
@@ -40,6 +42,7 @@ public class JobSeekerDTO {
         this.firstName = jobSeeker.getFirstName();
         this.lastName = jobSeeker.getLastName();
         this.email = jobSeeker.getUser().getEmail();
+        this.role = jobSeeker.getUser().getRole();
         this.address = jobSeeker.getAddress();
         this.profilePictureUrl = jobSeeker.getProfilePictureUrl();
         this.linkedInUrl = jobSeeker.getLinkedInUrl();
@@ -57,11 +60,12 @@ public class JobSeekerDTO {
     * savedJobSeeker.getUser().getEmail() - this is nested, so we are assembling it piece by piece.
     * */
 
-    public JobSeekerDTO(UUID jobSeekerId, String firstName, String lastName, String email, Address address, String profilePictureUrl, String linkedInUrl, String resumeUrl, List<Education> education, List<WorkExperience> workExperiences, Map<String, JobSeeker.SkillLevel> skills, List<Reference> references) {
+    public JobSeekerDTO(UUID jobSeekerId, String firstName, String lastName, String email, User.Role role, Address address, String profilePictureUrl, String linkedInUrl, String resumeUrl, List<Education> education, List<WorkExperience> workExperiences, Map<String, JobSeeker.SkillLevel> skills, List<Reference> references) {
         this.jobSeekerId = jobSeekerId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.role = role;
         this.address = address;
         this.profilePictureUrl = profilePictureUrl;
         this.linkedInUrl = linkedInUrl;
@@ -103,6 +107,14 @@ public class JobSeekerDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public User.Role getRole() {
+        return role;
+    }
+
+    public void setRole(User.Role role) {
+        this.role = role;
     }
 
     public Address getAddress() {
@@ -176,6 +188,7 @@ public class JobSeekerDTO {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
+                ", role='" + role + '\'' +
                 ", address='" + address + '\'' +
                 ", profilePictureUrl='" + profilePictureUrl + '\'' +
                 ", linkedInUrl='" + linkedInUrl + '\'' +

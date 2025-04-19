@@ -36,6 +36,13 @@ public class User {
     @OneToOne (mappedBy = "user", cascade = CascadeType.ALL)
     private Employer employer;
 
+    public User(String email, String password, Role role) {
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
+
     public enum Role{
         JobSeeker,
         Employer,

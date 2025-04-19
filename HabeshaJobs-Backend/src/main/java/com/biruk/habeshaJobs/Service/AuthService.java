@@ -2,24 +2,27 @@ package com.biruk.habeshaJobs.Service;
 
 import com.biruk.habeshaJobs.DAO.JobSeekerDAO;
 import com.biruk.habeshaJobs.DAO.UserDAO;
-import com.biruk.habeshaJobs.DTO.EmployerDTO;
-import com.biruk.habeshaJobs.DTO.JobSeekerDTO;
-import com.biruk.habeshaJobs.DTO.UserLoginDTO;
+import com.biruk.habeshaJobs.DTO.*;
 import com.biruk.habeshaJobs.Exceptions.EmailAlreadyExistsException;
+import com.biruk.habeshaJobs.Interfaces.FileStorageService;
 import com.biruk.habeshaJobs.Model.JobSeeker.JobSeeker;
 import com.biruk.habeshaJobs.Model.User.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Service;
 
+@Service
 public class AuthService {
 
     private final UserDAO userDAO;
     private final JobSeekerDAO jobSeekerDAO;
+    private final FileStorageService fileStorageService;
 
     @Autowired
-    public AuthService (UserDAO userDAO, JobSeekerDAO jobSeekerDAO) {
+    public AuthService (UserDAO userDAO, JobSeekerDAO jobSeekerDAO, FileStorageService fileStorageService) {
         this.userDAO = userDAO;
         this.jobSeekerDAO = jobSeekerDAO;
+        this.fileStorageService = fileStorageService;
     }
 
     /*
@@ -42,10 +45,15 @@ public class AuthService {
     String passwordPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+?',])[A-Za-z\\d!@#$%^&*()_+?',]{8,}$";
 
 
-    public JobSeekerDTO registerJobSeeker (JobSeeker jobSeeker) {
+    public JobSeekerDTO registerJobSeeker (JobSeekerRegistrationDTO dto) {
+        UserRegistrationDTO userDTO = dto.getUser();
 
-        String jobSeekerEmail = jobSeeker.getUser().getEmail();
-        String jobSeekerPassword = jobSeeker.getUser().getPassword();
+        String jobSeekerEmail = userDTO.getEmail();
+        String jobSeekerPassword = userDTO.getPassword();
+
+        // save the profile picture and resume file to the file storage and get the URLs
+        String profilePictureUrl = fileStorageService.saveFile(dto.getProfilePicture(), "profile_pictures");
+        String resumeFileUrl = fileStorageService.saveFile(dto.getResumeFile(), "resumes");
 
         //Validation
         // check if the email is not null or blank
@@ -75,22 +83,32 @@ public class AuthService {
         }
 
         try{
+            // create a new user instance and set the user properties with the data we get from the client(UserRegistrationDTO).
+            User user = new User(userDTO.getEmail(), userDTO.getPassword(), userDTO.getRole());
+
+            // create a new jobSeeker instance and set the jobSeeker properties with the data we get from the client(JobSeekerRegistrationDTO).
+            JobSeeker jobSeeker = new JobSeeker();
+
+            jobSeeker.setFirstName(dto.getFirstName());
+            jobSeeker.setLastName(dto.getLastName());
+            jobSeeker.setPhoneNumber(dto.getPhoneNumber());
+            jobSeeker.setDateOfBirth(dto.getDateOfBirth());
+            jobSeeker.setAddress(dto.getAddress());
+            jobSeeker.setEducation(dto.getEducation());
+            jobSeeker.setProfilePictureUrl(profilePictureUrl);
+            jobSeeker.setLinkedInUrl(dto.getLinkedInUrl());
+            jobSeeker.setSkills(dto.getSkills());
+            jobSeeker.setResumeUrl(resumeFileUrl);
+            jobSeeker.setWorkExperiences(dto.getWorkExperiences());
+            jobSeeker.setReferences(dto.getReferences());
+            jobSeeker.setUser(user);
+
+            //Save the JobSeeker in our database
             JobSeeker savedJobSeeker = jobSeekerDAO.save(jobSeeker);
 
-            return new JobSeekerDTO(
-                    savedJobSeeker.getJobSeekerId(),
-                    savedJobSeeker.getFirstName(),
-                    savedJobSeeker.getLastName(),
-                    savedJobSeeker.getUser().getEmail(),
-                    savedJobSeeker.getAddress(),
-                    savedJobSeeker.getProfilePictureUrl(),
-                    savedJobSeeker.getLinkedInUrl(),
-                    savedJobSeeker.getResumeUrl(),
-                    savedJobSeeker.getEducation(),
-                    savedJobSeeker.getWorkExperiences(),
-                    savedJobSeeker.getSkills(),
-                    savedJobSeeker.getReferences()
-                    );
+            // Now we need to return the jobSeekerDTO to the client
+            return new JobSeekerDTO(savedJobSeeker);
+
         }catch(DataIntegrityViolationException e){
             throw new RuntimeException("failed to register JobSeeker: " + e.getMessage(), e);
         }
@@ -141,10 +159,4 @@ public class AuthService {
 
 
     }
-
-
-
-
-
-
 }

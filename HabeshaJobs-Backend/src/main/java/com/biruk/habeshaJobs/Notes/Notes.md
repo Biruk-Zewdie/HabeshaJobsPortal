@@ -24,4 +24,8 @@
 14. make the application microservices based.
 15. containerize the application using docker.
 16. add a feature of CI/CD to the application using jenkins.
-17. 
+
+## new Things learned
+1. Registration DTO to transfer input data from the user input to our entity/ DB instead of using the entity directly.
+2. MultipartFile to upload files in Spring Boot.
+3. validate the file type and size before uploading get the url
