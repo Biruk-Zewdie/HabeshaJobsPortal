@@ -217,6 +217,5 @@ public class AuthService {
             case Employer -> new OutgoingEmployerDTO(returnedUser.getEmployer());
             default -> throw new IllegalStateException("Unexpected value: " + returnedUser.getRole());
         };
-        
     }
 }
