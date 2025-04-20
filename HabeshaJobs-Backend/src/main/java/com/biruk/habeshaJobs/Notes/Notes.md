@@ -24,8 +24,35 @@
 14. make the application microservices based.
 15. containerize the application using docker.
 16. add a feature of CI/CD to the application using jenkins.
+17. add malware/vires scanning for uploaded files such as resumes and profile pictures using AWS Lambda clamAV and file type/size validation using spring boot.
+18. hide/visible fields such as phone number, email, etc. and access features like in-app message to employers and job seekers based on their subscription plan and membership using multiple DTOs for different plans, single DTO with conditional mapping or using JSON views (Spring features).
 
 ## new Things learned
 1. Registration DTO to transfer input data from the user input to our entity/ DB instead of using the entity directly.
 2. MultipartFile to upload files in Spring Boot.
 3. validate the file type and size before uploading get the url
+
+## End points 
+1. registration for Employer 
+2. registration for Job Seeker ✅
+3. login for user (Job seeker and Employer) ✅
+4. get all jobs 
+5. get all jobs by employer id
+6. get jobs by id 
+7. get all jobs applied by job seeker using job seeker id
+8. get employer by id 
+9. get job seeker by id
+10. get all job seekers
+11. get all employers get all jobs with in a specific range of distance from the job seeker's location
+12. get all jobs with in a specific range of salary from the job seeker's expected salary
+13. get all jobs with in a specific range of experience from the job seeker's expected experience
+14. get all jobs with in a specific range of education from the job seeker's expected education
+15. get all jobs with in a specific range of skills from the job seeker's expected skills
+16. post a job by employer id
+17. update a job by employer id
+18. update a job seeker profile by job seeker id
+19. update an employer profile by employer id
+20. delete a job by employer id
+21. delete a job seeker profile by job seeker id
+22. delete an employer profile by employer id
+

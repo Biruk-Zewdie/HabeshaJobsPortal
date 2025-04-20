@@ -1,10 +1,12 @@
 package com.biruk.habeshaJobs.Service;
 
+import com.biruk.habeshaJobs.DAO.EmployerDAO;
 import com.biruk.habeshaJobs.DAO.JobSeekerDAO;
 import com.biruk.habeshaJobs.DAO.UserDAO;
 import com.biruk.habeshaJobs.DTO.*;
 import com.biruk.habeshaJobs.Exceptions.EmailAlreadyExistsException;
 import com.biruk.habeshaJobs.Interfaces.FileStorageService;
+import com.biruk.habeshaJobs.Model.Employer;
 import com.biruk.habeshaJobs.Model.JobSeeker.JobSeeker;
 import com.biruk.habeshaJobs.Model.User.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +18,14 @@ public class AuthService {
 
     private final UserDAO userDAO;
     private final JobSeekerDAO jobSeekerDAO;
+    private final EmployerDAO employerDAO;
     private final FileStorageService fileStorageService;
 
     @Autowired
-    public AuthService (UserDAO userDAO, JobSeekerDAO jobSeekerDAO, FileStorageService fileStorageService) {
+    public AuthService (UserDAO userDAO, JobSeekerDAO jobSeekerDAO, EmployerDAO employerDAO, FileStorageService fileStorageService) {
         this.userDAO = userDAO;
         this.jobSeekerDAO = jobSeekerDAO;
+        this.employerDAO = employerDAO;
         this.fileStorageService = fileStorageService;
     }
 
@@ -44,63 +48,74 @@ public class AuthService {
     String emailPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
     String passwordPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+?',])[A-Za-z\\d!@#$%^&*()_+?',]{8,}$";
 
+    //this method is used to validate email and password of the user before registering the user.
+    // it is common for both job seeker and employer.
 
-    public OutgoingJobSeekerDTO registerJobSeeker (IncomingJobSeekerRegistrationDTO dto) {
-        IncomingUserRegistrationDTO userDTO = dto.getUser();
+    private void validateUserCredentials (String email, String password){
 
-        String jobSeekerEmail = userDTO.getEmail();
-        String jobSeekerPassword = userDTO.getPassword();
 
-        // save the profile picture and resume file to the file storage and get the URLs
-        String profilePictureUrl = fileStorageService.saveFile(dto.getProfilePicture(), "profile_pictures");
-        String resumeFileUrl = fileStorageService.saveFile(dto.getResumeFile(), "resumes");
 
-        //Validation
         // check if the email is not null or blank
-
-        if (jobSeekerEmail == null || jobSeekerEmail.isBlank()){
+        if (email == null || email.isBlank()){
             throw new IllegalArgumentException("Email cannot be null or Blank");
         }
 
 
-        if (!jobSeekerEmail.matches(emailPattern)){
+        if (!email.matches(emailPattern)){
             throw new IllegalArgumentException("The email that you have entered is not valid");
         }
 
         // check if the email is already exists in the database because it is unique user identifier.
-        if (userDAO.findByEmail(jobSeekerEmail).isPresent()){
-            throw new EmailAlreadyExistsException("Email " + jobSeekerEmail + " already exists");
+        if (userDAO.findByEmail(email).isPresent()){
+            throw new EmailAlreadyExistsException("Email " + email + " already exists");
         }
 
         // check if the password is not null or blank
-        if (jobSeekerPassword == null || jobSeekerPassword.isBlank()){
+        if (password == null || password.isBlank()){
             throw new IllegalArgumentException("password cannot be null or blank");
         }
 
         //check if the password is valid using regex
-        if (jobSeekerPassword.matches(passwordPattern)){
+        if (password.matches(passwordPattern)){
             throw new IllegalArgumentException("password is not valid");
         }
+    }
+
+
+
+    public OutgoingJobSeekerDTO registerJobSeeker (IncomingJobSeekerRegDTO JSeekerRegDTO) {
+        IncomingUserRegDTO userDTO = JSeekerRegDTO.getUser();
+
+        String jobSeekerEmail = userDTO.getEmail();
+        String jobSeekerPassword = userDTO.getPassword();
+
+        // validate the user credentials(email and password) before registering the user.
+        validateUserCredentials(jobSeekerEmail, jobSeekerPassword);
+
+        // save the profile picture and resume file to the file storage and get the URLs
+        String profilePictureUrl = fileStorageService.saveFile(JSeekerRegDTO.getProfilePicture(), "profile_pictures");
+        String resumeFileUrl = fileStorageService.saveFile(JSeekerRegDTO.getResumeFile(), "resumes");
+
 
         try{
-            // create a new user instance and set the user properties with the data we get from the client(IncomingUserRegistrationDTO).
+            // create a new user instance and set the user properties with the data we get from the client(IncomingUserRegDTO).
             User user = new User(userDTO.getEmail(), userDTO.getPassword(), userDTO.getRole());
 
-            // create a new jobSeeker instance and set the jobSeeker properties with the data we get from the client(IncomingJobSeekerRegistrationDTO).
+            // create a new jobSeeker instance and set the jobSeeker properties with the data we get from the client(IncomingJobSeekerRegDTO).
             JobSeeker jobSeeker = new JobSeeker();
 
-            jobSeeker.setFirstName(dto.getFirstName());
-            jobSeeker.setLastName(dto.getLastName());
-            jobSeeker.setPhoneNumber(dto.getPhoneNumber());
-            jobSeeker.setDateOfBirth(dto.getDateOfBirth());
-            jobSeeker.setAddress(dto.getAddress());
-            jobSeeker.setEducation(dto.getEducation());
+            jobSeeker.setFirstName(JSeekerRegDTO.getFirstName());
+            jobSeeker.setLastName(JSeekerRegDTO.getLastName());
+            jobSeeker.setPhoneNumber(JSeekerRegDTO.getPhoneNumber());
+            jobSeeker.setDateOfBirth(JSeekerRegDTO.getDateOfBirth());
+            jobSeeker.setAddress(JSeekerRegDTO.getAddress());
+            jobSeeker.setEducation(JSeekerRegDTO.getEducation());
             jobSeeker.setProfilePictureUrl(profilePictureUrl);
-            jobSeeker.setLinkedInUrl(dto.getLinkedInUrl());
-            jobSeeker.setSkills(dto.getSkills());
+            jobSeeker.setLinkedInUrl(JSeekerRegDTO.getLinkedInUrl());
+            jobSeeker.setSkills(JSeekerRegDTO.getSkills());
             jobSeeker.setResumeUrl(resumeFileUrl);
-            jobSeeker.setWorkExperiences(dto.getWorkExperiences());
-            jobSeeker.setReferences(dto.getReferences());
+            jobSeeker.setWorkExperiences(JSeekerRegDTO.getWorkExperiences());
+            jobSeeker.setReferences(JSeekerRegDTO.getReferences());
             jobSeeker.setUser(user);
 
             //Save the JobSeeker in our database
@@ -113,7 +128,53 @@ public class AuthService {
             throw new RuntimeException("failed to register JobSeeker: " + e.getMessage(), e);
         }
     }
+    
+    public OutgoingEmployerDTO registerEmployer (IncomingEmployerRegDTO employerRegDTO){
 
+        IncomingUserRegDTO userDTO = employerRegDTO.getUser();
+
+        String employerEmail = userDTO.getEmail();
+        String employerPassword = userDTO.getPassword();
+
+        //validate the Employer Credentials (email and password) before registering the employer.
+        validateUserCredentials(employerEmail, employerPassword);
+
+        //save the logo picture to the file storage and get the Url.
+        String logoPicturesUrl = fileStorageService.saveFile(employerRegDTO.getLogoPicture(), "logo_pictures");
+
+        try{
+
+            //Create a new user instance and set the user properties
+            //this user instance is used to create the employer instance at the below code (employer.setUser(user)).
+            User user = new User(userDTO.getEmail(), userDTO.getPassword(), userDTO.getRole());
+
+            //create a new employer instance and set the employer properties with the data we get from the client(IncomingEmployerRegDTO).
+            Employer employer = new Employer ();
+
+            employer.setCompanyName(employerRegDTO.getCompanyName());
+            employer.setPhoneNumber(employerRegDTO.getPhoneNumber());
+            employer.setAddress(employerRegDTO.getAddress());
+            employer.setIndustrySector(employerRegDTO.getIndustrySector());
+            employer.setCompanyDescription(employerRegDTO.getCompanyDescription());
+            employer.setLogoUrl(logoPicturesUrl);
+            employer.setCompanySize(employerRegDTO.getCompanySize());
+            employer.setUser(user);
+
+            //save the employer in our database
+            Employer savedEmployer = employerDAO.save(employer);
+
+            //Now we need to return the OutgoingEmployerDTO to the client.
+            return new OutgoingEmployerDTO(savedEmployer);
+
+
+
+        }catch (DataIntegrityViolationException e){
+            throw new RuntimeException("failed to register Employer: " + e.getMessage(), e);
+        }
+    }
+
+    // this login method used to login the user whether it is a job seeker or employer.
+    // it takes the user email and password and check if the user is found in the database.
     public Object login (IncomingUserLoginDTO userLoginDTO) {
 
         // .isBlank() checks if the string is empty or contains only whitespace.
@@ -153,10 +214,9 @@ public class AuthService {
 
         return switch (returnedUser.getRole()) {
             case JobSeeker -> new OutgoingJobSeekerDTO(returnedUser.getJobSeeker());
-            case Employer -> new EmployerDTO(returnedUser.getEmployer());
+            case Employer -> new OutgoingEmployerDTO(returnedUser.getEmployer());
             default -> throw new IllegalStateException("Unexpected value: " + returnedUser.getRole());
         };
-
-
+        
     }
 }

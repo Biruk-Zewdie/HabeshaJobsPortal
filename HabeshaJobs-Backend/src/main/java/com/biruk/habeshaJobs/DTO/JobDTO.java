@@ -22,7 +22,7 @@ public class JobDTO {
     private Job.JobType jobType;
     private JobDescription jobDescription;
     private LocalDateTime createdAt;
-    private EmployerDTO employerDTO;
+    private OutgoingEmployerDTO employerDTO;
 
 
     public JobDTO() {
@@ -30,7 +30,7 @@ public class JobDTO {
     }
 
     public JobDTO(UUID jobId, String jobTitle, double salary, Address address, Job.JobType jobType,
-                  JobDescription jobDescription, LocalDateTime createdAt, EmployerDTO employerDTO) {
+                  JobDescription jobDescription, LocalDateTime createdAt, OutgoingEmployerDTO employerDTO) {
 
         this.jobId = jobId;
         this.jobTitle = jobTitle;
@@ -98,11 +98,11 @@ public class JobDTO {
         this.createdAt = createdAt;
     }
 
-    public EmployerDTO getEmployerDTO() {
+    public OutgoingEmployerDTO getEmployerDTO() {
         return employerDTO;
     }
 
-    public void setEmployerDTO(EmployerDTO employerDTO) {
+    public void setEmployerDTO(OutgoingEmployerDTO employerDTO) {
         this.employerDTO = employerDTO;
     }
 

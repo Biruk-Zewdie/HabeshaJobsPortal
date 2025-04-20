@@ -24,11 +24,13 @@ public class Employer {
     @Column(nullable = false)
     private String companyName;
 
+    private String phoneNumber;
+
     @Embedded
     private Address address;
 
     private String industrySector;
-    private String description;
+    private String companyDescription;
     private LocalDateTime registrationDate = LocalDateTime.now();
     private String logoUrl;
     private CompanySize companySize;
@@ -48,15 +50,16 @@ public class Employer {
     public Employer() {
     }
 
-    public Employer(UUID employerId, String companyName, Address address, String industrySector, String description,
+    public Employer(UUID employerId, String companyName, String phoneNumber, Address address, String industrySector, String companyDescription,
                     LocalDateTime registrationDate, String logoUrl, CompanySize companySize, List<Job> jobsPosted,
                     List <JobApplication> jobApplications, User user) {
 
         this.employerId = employerId;
         this.companyName = companyName;
+        this.phoneNumber = phoneNumber;
         this.address = address;
         this.industrySector = industrySector;
-        this.description = description;
+        this.companyDescription = companyDescription;
         this.registrationDate = registrationDate;
         this.logoUrl = logoUrl;
         this.companySize = companySize;
@@ -81,6 +84,14 @@ public class Employer {
         this.companyName = companyName;
     }
 
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
     public Address getAddress() {
         return address;
     }
@@ -97,12 +108,12 @@ public class Employer {
         this.industrySector = industrySector;
     }
 
-    public String getDescription() {
-        return description;
+    public String getCompanyDescription() {
+        return companyDescription;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setCompanyDescription(String companyDescription) {
+        this.companyDescription = companyDescription;
     }
 
     public LocalDateTime getRegistrationDate() {
@@ -164,9 +175,10 @@ public class Employer {
         return "Employer{" +
                 "employerId=" + employerId +
                 ", companyName='" + companyName + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
                 ", address=" + address +
                 ", industrySector='" + industrySector + '\'' +
-                ", description='" + description + '\'' +
+                ", companyDescription='" + companyDescription + '\'' +
                 ", registrationDate=" + registrationDate +
                 ", logoUrl='" + logoUrl + '\'' +
                 ", companySize=" + companySize +

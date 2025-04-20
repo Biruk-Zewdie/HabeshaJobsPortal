@@ -2,33 +2,36 @@ package com.biruk.habeshaJobs.DTO;
 
 import com.biruk.habeshaJobs.Model.Common.Address;
 import com.biruk.habeshaJobs.Model.Employer;
+import com.biruk.habeshaJobs.Model.User.User;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class EmployerDTO {
+public class OutgoingEmployerDTO {
 
     private UUID employerId;
     private String companyName;
     private String email;
+    private User.Role role;
     private Address address;
-    private String description;
+    private String companyDescription;
     private String industrySector;
     private String logoUrl;
     private Employer.CompanySize companySize;
     private LocalDateTime registrationDate;
 
 
-    public EmployerDTO() {
+    public OutgoingEmployerDTO() {
 
     }
 
-    public EmployerDTO(Employer employer) {
+    public OutgoingEmployerDTO(Employer employer) {
         this.employerId = employer.getEmployerId();
         this.companyName = employer.getCompanyName();
         this.email = employer.getUser().getEmail();
+        this.role = employer.getUser().getRole();
         this.address = employer.getAddress();
-        this.description = employer.getDescription();
+        this.companyDescription = employer.getCompanyDescription();
         this.industrySector = employer.getIndustrySector();
         this.logoUrl = employer.getLogoUrl();
         this.companySize = employer.getCompanySize();
@@ -58,6 +61,12 @@ public class EmployerDTO {
     public void setEmail(String email) {
         this.email = email;
     }
+    public User.Role getRole() {
+        return role;
+    }
+    public void setRole(User.Role role) {
+        this.role = role;
+    }
 
     public Address getAddress() {
         return address;
@@ -67,12 +76,12 @@ public class EmployerDTO {
         this.address = address;
     }
 
-    public String getDescription() {
-        return description;
+    public String getCompanyDescription() {
+        return companyDescription;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setCompanyDescription(String companyDescription) {
+        this.companyDescription = companyDescription;
     }
 
     public String getIndustrySector() {
@@ -109,12 +118,13 @@ public class EmployerDTO {
 
     @Override
     public String toString() {
-        return "EmployerDTO{" +
+        return "OutgoingEmployerDTO{" +
                 "employerId=" + employerId +
                 ", companyName='" + companyName + '\'' +
                 ", email='" + email + '\'' +
+                ", role='" + role + '\'' +
                 ", address=" + address +
-                ", description='" + description + '\'' +
+                ", companyDescription='" + companyDescription + '\'' +
                 ", industrySector='" + industrySector + '\'' +
                 ", logoUrl='" + logoUrl + '\'' +
                 ", companySize='" + companySize + '\'' +

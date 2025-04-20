@@ -27,7 +27,7 @@ import java.util.Map;
 * List<JobApplication> jobApplication - this is filled by the app after registration if the job seeker applies for a job
 * */
 
-public class IncomingJobSeekerRegistrationDTO {
+public class IncomingJobSeekerRegDTO {
 
 
     private String firstName;
@@ -42,15 +42,15 @@ public class IncomingJobSeekerRegistrationDTO {
     private MultipartFile resumeFile;           //could be .pdf, .docx, .txt
     private List<WorkExperience> workExperiences;
     private List<Reference> references;
-    private IncomingUserRegistrationDTO user;
+    private IncomingUserRegDTO user;
 
-    public IncomingJobSeekerRegistrationDTO() {
+    public IncomingJobSeekerRegDTO() {
     }
 
-    public IncomingJobSeekerRegistrationDTO(String firstName, String lastName, String phoneNumber, LocalDate dateOfBirth, Address address,
-                                            List<Education> education, MultipartFile profilePicture, String linkedInUrl,
-                                            Map<String, JobSeeker.SkillLevel> skills, MultipartFile resumeFile,
-                                            List<WorkExperience> workExperiences, List<Reference> references, IncomingUserRegistrationDTO user) {
+    public IncomingJobSeekerRegDTO(String firstName, String lastName, String phoneNumber, LocalDate dateOfBirth, Address address,
+                                   List<Education> education, MultipartFile profilePicture, String linkedInUrl,
+                                   Map<String, JobSeeker.SkillLevel> skills, MultipartFile resumeFile,
+                                   List<WorkExperience> workExperiences, List<Reference> references, IncomingUserRegDTO user) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
@@ -162,17 +162,17 @@ public class IncomingJobSeekerRegistrationDTO {
         this.references = references;
     }
 
-    public IncomingUserRegistrationDTO getUser() {
+    public IncomingUserRegDTO getUser() {
         return user;
     }
 
-    public void setUser(IncomingUserRegistrationDTO user) {
+    public void setUser(IncomingUserRegDTO user) {
         this.user = user;
     }
 
     @Override
     public String toString() {
-        return "IncomingJobSeekerRegistrationDTO{" +
+        return "IncomingJobSeekerRegDTO{" +
                 "firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
