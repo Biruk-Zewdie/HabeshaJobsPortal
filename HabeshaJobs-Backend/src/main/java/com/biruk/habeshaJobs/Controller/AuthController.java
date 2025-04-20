@@ -1,0 +1,53 @@
+package com.biruk.habeshaJobs.Controller;
+
+import com.biruk.habeshaJobs.DTO.*;
+import com.biruk.habeshaJobs.Service.AuthService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/auth")
+@CrossOrigin()
+public class AuthController {
+
+    private final AuthService authService;
+
+    @Autowired
+    public AuthController(AuthService authService){
+        this.authService = authService;
+    }
+
+    @PostMapping("/register/jobSeeker")
+    public ResponseEntity<OutgoingJobSeekerDTO> registerJobSeeker(@RequestBody IncomingJobSeekerRegDTO jobSeekerRegDTO){
+
+        //save the job seeker to the database and return the job seeker object to the client
+        OutgoingJobSeekerDTO outgoingJobSeekerDTO = authService.registerJobSeeker(jobSeekerRegDTO);
+
+        return ResponseEntity.ok(outgoingJobSeekerDTO);
+
+    }
+
+    public ResponseEntity <OutgoingEmployerDTO> registerEmployer (@RequestBody IncomingEmployerRegDTO employerRegDTO) {
+
+        OutgoingEmployerDTO outgoingEmployerDTO = authService.registerEmployer(employerRegDTO);
+
+        return ResponseEntity.ok(outgoingEmployerDTO);
+
+    }
+
+    @PostMapping("/login/")
+    public ResponseEntity <?> login (@RequestBody IncomingUserLoginDTO userLoginDTO){
+        try {
+            Object userObj = authService.login(userLoginDTO);
+
+            return ResponseEntity.ok(userObj);
+        }catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing your request.");
+        }
+    }
+
+}

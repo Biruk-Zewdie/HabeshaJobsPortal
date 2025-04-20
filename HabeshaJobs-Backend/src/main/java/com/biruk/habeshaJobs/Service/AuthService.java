@@ -53,8 +53,6 @@ public class AuthService {
 
     private void validateUserCredentials (String email, String password){
 
-
-
         // check if the email is not null or blank
         if (email == null || email.isBlank()){
             throw new IllegalArgumentException("Email cannot be null or Blank");
