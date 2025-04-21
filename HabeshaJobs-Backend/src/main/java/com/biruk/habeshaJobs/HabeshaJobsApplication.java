@@ -11,6 +11,11 @@ public class HabeshaJobsApplication {
 		SpringApplication.run(HabeshaJobsApplication.class, args);
 
 		System.out.println("Habesha jobs launched!");
+
+		String password = "Biruk1234!";
+		String pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+?',])[A-Za-z\\d!@#$%^&*()_+?',]{8,}$";
+
+		System.out.println(password.matches(pattern));
 	}
 
 }

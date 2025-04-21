@@ -69,7 +69,7 @@ public class JobSeeker {
     @OneToMany (mappedBy = "jobSeeker", cascade = CascadeType.ALL)
     private List <JobApplication> jobApplication = new ArrayList<> ();
 
-    @OneToOne
+    @OneToOne (cascade = CascadeType.ALL)
     @JoinColumn (name = "userId", nullable = false)
     private User user;
 

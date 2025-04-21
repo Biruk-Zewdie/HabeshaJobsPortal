@@ -19,8 +19,8 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("/register/jobSeeker")
-    public ResponseEntity<OutgoingJobSeekerDTO> registerJobSeeker(@RequestBody IncomingJobSeekerRegDTO jobSeekerRegDTO){
+    @PostMapping("/register/jobseeker")
+    public ResponseEntity<OutgoingJobSeekerDTO> registerJobSeeker(@ModelAttribute IncomingJobSeekerRegDTO jobSeekerRegDTO){
 
         //save the job seeker to the database and return the job seeker object to the client
         OutgoingJobSeekerDTO outgoingJobSeekerDTO = authService.registerJobSeeker(jobSeekerRegDTO);

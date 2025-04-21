@@ -31,6 +31,13 @@
 1. Registration DTO to transfer input data from the user input to our entity/ DB instead of using the entity directly.
 2. MultipartFile to upload files in Spring Boot.
 3. validate the file type and size before uploading get the url
+4. we use form-data instead of raw data to files in Postman.
+5. we should use @ModelAttribute instead of @RequestBody if we are using form-data in Postman to upload files.
+6. If you includes spring security in you dependency, it will automatically block all endpoints by default and we need to configure it to allow access to the endpoints we want.
+7. The maximum file size for uploading files in Spring Boot is 1MB by default and we can change it by adding the following properties in the application.properties file:
+   - spring.servlet.multipart.max-file-size=10MB
+   - spring.servlet.multipart.max-request-size=10MB
+
 
 ## End points 
 1. registration for Employer 

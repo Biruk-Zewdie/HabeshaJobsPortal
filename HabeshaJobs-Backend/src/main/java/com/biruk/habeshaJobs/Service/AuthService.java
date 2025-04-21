@@ -74,7 +74,7 @@ public class AuthService {
         }
 
         //check if the password is valid using regex
-        if (password.matches(passwordPattern)){
+        if (!password.matches(passwordPattern)){
             throw new IllegalArgumentException("password is not valid");
         }
     }

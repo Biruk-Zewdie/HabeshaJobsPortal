@@ -3,25 +3,26 @@ package com.biruk.habeshaJobs.Model.JobSeeker;
 import jakarta.persistence.Embeddable;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Embeddable
 public class WorkExperience {
 
     private String companyName;
-    private String jobTitle;
+    private String position;
     private LocalDate startDate;
     private LocalDate endDate;
-    private List<String> responsibilities;
+    private List<String> responsibilities = new ArrayList<>();
     private String achievements;
 
     public WorkExperience() {
 
     }
 
-    public WorkExperience(String companyName, String jobTitle, LocalDate startDate, LocalDate endDate, List<String> responsibilities, String achievements) {
+    public WorkExperience(String companyName, String position, LocalDate startDate, LocalDate endDate, List<String> responsibilities, String achievements) {
         this.companyName = companyName;
-        this.jobTitle = jobTitle;
+        this.position = position;
         this.startDate = startDate;
         this.endDate = endDate;
         this.responsibilities = responsibilities;
@@ -36,12 +37,12 @@ public class WorkExperience {
         this.companyName = companyName;
     }
 
-    public String getJobTitle() {
-        return jobTitle;
+    public String getPosition() {
+        return position;
     }
 
-    public void setJobTitle(String jobTitle) {
-        this.jobTitle = jobTitle;
+    public void setPosition(String position) {
+        this.position = position;
     }
 
     public LocalDate getStartDate() {
@@ -80,7 +81,7 @@ public class WorkExperience {
     public String toString() {
         return "WorkExperience{" +
                 "companyName='" + companyName + '\'' +
-                ", jobTitle='" + jobTitle + '\'' +
+                ", position ='" + position + '\'' +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
                 ", responsibilities=" + responsibilities +

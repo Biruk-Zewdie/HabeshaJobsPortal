@@ -8,6 +8,8 @@ import com.biruk.habeshaJobs.Model.JobSeeker.WorkExperience;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,13 +37,13 @@ public class IncomingJobSeekerRegDTO {
     private String phoneNumber;
     private LocalDate dateOfBirth;
     private Address address;
-    private List<Education> education;
+    private List<Education> education = new ArrayList<>();
     private MultipartFile profilePicture;  //could be .png, .jpg, .jpeg
     private String linkedInUrl;
-    private Map<String, JobSeeker.SkillLevel> skills;
+    private Map<String, JobSeeker.SkillLevel> skills = new HashMap<>();
     private MultipartFile resumeFile;           //could be .pdf, .docx, .txt
-    private List<WorkExperience> workExperiences;
-    private List<Reference> references;
+    private List<WorkExperience> workExperiences = new ArrayList<>();
+    private List<Reference> references = new ArrayList<>();
     private IncomingUserRegDTO user;
 
     public IncomingJobSeekerRegDTO() {
