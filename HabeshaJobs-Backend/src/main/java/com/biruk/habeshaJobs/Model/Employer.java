@@ -43,7 +43,7 @@ public class Employer {
     @OneToMany(mappedBy = "employer", cascade = CascadeType.ALL)
     private List<JobApplication> jobApplications = new ArrayList<> ();     // this will hold the job applications associated with this job.
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 

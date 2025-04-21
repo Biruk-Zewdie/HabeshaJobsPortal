@@ -29,7 +29,9 @@ public class AuthController {
 
     }
 
-    public ResponseEntity <OutgoingEmployerDTO> registerEmployer (@RequestBody IncomingEmployerRegDTO employerRegDTO) {
+    @PostMapping("/register/employer")
+
+    public ResponseEntity <OutgoingEmployerDTO> registerEmployer (@ModelAttribute IncomingEmployerRegDTO employerRegDTO) {
 
         OutgoingEmployerDTO outgoingEmployerDTO = authService.registerEmployer(employerRegDTO);
 
