@@ -37,12 +37,13 @@
 7. The maximum file size for uploading files in Spring Boot is 1MB by default and we can change it by adding the following properties in the application.properties file:
    - spring.servlet.multipart.max-file-size=10MB
    - spring.servlet.multipart.max-request-size=10MB
+8. It is a best practice to add JWT auth after the login endpoint built in order to keep in consideration JWT authorization for other endpoints. 
 
 
 ## End points 
-1. registration for Employer 
-2. registration for Job Seeker ✅
-3. login for user (Job seeker and Employer) ✅
+1. registration for Employer ✅ tested on postman
+2. registration for Job Seeker ✅ tested on postman
+3. login for user (Job seeker and Employer) ✅ tested on postman
 4. get all jobs 
 5. get all jobs by employer id
 6. get jobs by id 

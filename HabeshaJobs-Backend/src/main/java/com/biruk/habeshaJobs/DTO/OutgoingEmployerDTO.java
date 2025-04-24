@@ -19,10 +19,25 @@ public class OutgoingEmployerDTO {
     private String logoUrl;
     private Employer.CompanySize companySize;
     private LocalDateTime registrationDate;
+    private String token;
 
 
     public OutgoingEmployerDTO() {
 
+    }
+
+    public OutgoingEmployerDTO(Employer employer, String token){
+        this.employerId = employer.getEmployerId();
+        this.companyName = employer.getCompanyName();
+        this.email = employer.getUser().getEmail();
+        this.role = employer.getUser().getRole();
+        this.address = employer.getAddress();
+        this.companyDescription = employer.getCompanyDescription();
+        this.industrySector = employer.getIndustrySector();
+        this.logoUrl = employer.getLogoUrl();
+        this.companySize = employer.getCompanySize();
+        this.registrationDate = employer.getRegistrationDate();
+        this.token = token;
     }
 
     public OutgoingEmployerDTO(Employer employer) {
@@ -36,6 +51,7 @@ public class OutgoingEmployerDTO {
         this.logoUrl = employer.getLogoUrl();
         this.companySize = employer.getCompanySize();
         this.registrationDate = employer.getRegistrationDate();
+        this.token = null;
     }
 
     public UUID getEmployerId() {
@@ -114,6 +130,14 @@ public class OutgoingEmployerDTO {
 
     public void setRegistrationDate(LocalDateTime registrationDate) {
         this.registrationDate = registrationDate;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     @Override

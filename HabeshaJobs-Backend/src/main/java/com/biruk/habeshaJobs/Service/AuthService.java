@@ -9,8 +9,13 @@ import com.biruk.habeshaJobs.Interfaces.FileStorageService;
 import com.biruk.habeshaJobs.Model.Employer;
 import com.biruk.habeshaJobs.Model.JobSeeker.JobSeeker;
 import com.biruk.habeshaJobs.Model.User.User;
+import com.biruk.habeshaJobs.SecurityConfig.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,13 +25,22 @@ public class AuthService {
     private final JobSeekerDAO jobSeekerDAO;
     private final EmployerDAO employerDAO;
     private final FileStorageService fileStorageService;
+    private final PasswordEncoder passwordEncoder;
+    private final JWTUtil jwtUtil;
+    private final AuthenticationManager authenticationManager;
 
     @Autowired
-    public AuthService (UserDAO userDAO, JobSeekerDAO jobSeekerDAO, EmployerDAO employerDAO, FileStorageService fileStorageService) {
+    public AuthService (UserDAO userDAO, JobSeekerDAO jobSeekerDAO, EmployerDAO employerDAO,
+                        FileStorageService fileStorageService, PasswordEncoder passwordEncoder,
+                        AuthenticationManager authenticationManager, JWTUtil jwtUtil) {
+
         this.userDAO = userDAO;
         this.jobSeekerDAO = jobSeekerDAO;
         this.employerDAO = employerDAO;
         this.fileStorageService = fileStorageService;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
+        this.authenticationManager = authenticationManager;
     }
 
     /*
@@ -87,6 +101,7 @@ public class AuthService {
         String jobSeekerEmail = userDTO.getEmail();
         String jobSeekerPassword = userDTO.getPassword();
 
+
         // validate the user credentials(email and password) before registering the user.
         validateUserCredentials(jobSeekerEmail, jobSeekerPassword);
 
@@ -97,7 +112,10 @@ public class AuthService {
 
         try{
             // create a new user instance and set the user properties with the data we get from the client(IncomingUserRegDTO).
-            User user = new User(userDTO.getEmail(), userDTO.getPassword(), userDTO.getRole());
+            User user = new User(
+                    userDTO.getEmail(),
+                    passwordEncoder.encode(userDTO.getPassword()),
+                    userDTO.getRole());
 
             // create a new jobSeeker instance and set the jobSeeker properties with the data we get from the client(IncomingJobSeekerRegDTO).
             JobSeeker jobSeeker = new JobSeeker();
@@ -144,7 +162,10 @@ public class AuthService {
 
             //Create a new user instance and set the user properties
             //this user instance is used to create the employer instance at the below code (employer.setUser(user)).
-            User user = new User(userDTO.getEmail(), userDTO.getPassword(), userDTO.getRole());
+            User user = new User(
+                    userDTO.getEmail(),
+                    passwordEncoder.encode(userDTO.getPassword()),
+                    userDTO.getRole());
 
             //create a new employer instance and set the employer properties with the data we get from the client(IncomingEmployerRegDTO).
             Employer employer = new Employer ();
@@ -206,13 +227,29 @@ public class AuthService {
         - if the user is found return the user. If not found throw an exception.
         */
 
-        User returnedUser = userDAO.findByEmailAndPassword(userLoginDTO.getEmail(), userLoginDTO.getPassword())
-                .orElseThrow(
-                        () -> new IllegalArgumentException("user not found with the given email and password"));
+//        User returnedUser = userDAO.findByEmailAndPassword(userLoginDTO.getEmail(), userLoginDTO.getPassword())
+//                .orElseThrow(
+//                        () -> new IllegalArgumentException("user not found with the given email and password"));
+// the commented code above was used to check the email and password in the database.
+// now we will use the authentication manager from spring security to authenticate the user.
+        try{
+            authenticationManager.authenticate (
+                new UsernamePasswordAuthenticationToken(userLoginDTO.getEmail(), userLoginDTO.getPassword()));
+        }catch (AuthenticationException e){
+            throw new IllegalArgumentException("Invalid email or password", e);
+        }
+
+        //get the user from the database using the email and determine the role of the user.
+        User returnedUser = userDAO.findByEmail(userLoginDTO.getEmail())
+                .orElseThrow(()-> new IllegalArgumentException("user not found with the given email"));
+
+        String token = jwtUtil.generateToken(returnedUser);
+
+        System.out.println("the token is: " + token);
 
         return switch (returnedUser.getRole()) {
-            case JobSeeker -> new OutgoingJobSeekerDTO(returnedUser.getJobSeeker());
-            case Employer -> new OutgoingEmployerDTO(returnedUser.getEmployer());
+            case JobSeeker -> new OutgoingJobSeekerDTO(returnedUser.getJobSeeker(), token);
+            case Employer -> new OutgoingEmployerDTO(returnedUser.getEmployer(), token);
             default -> throw new IllegalStateException("Unexpected value: " + returnedUser.getRole());
         };
     }

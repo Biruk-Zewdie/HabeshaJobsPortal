@@ -29,6 +29,7 @@ public class OutgoingJobSeekerDTO {
     private List<WorkExperience> workExperiences;
     private Map<String, JobSeeker.SkillLevel> skills;
     private List <Reference> references;
+    private String token;
 
     public OutgoingJobSeekerDTO() {
     }
@@ -52,6 +53,24 @@ public class OutgoingJobSeekerDTO {
         this.workExperiences = jobSeeker.getWorkExperiences();
         this.skills = jobSeeker.getSkills();
         this.references = jobSeeker.getReferences();
+        this.token = null;
+    }
+
+    public OutgoingJobSeekerDTO(JobSeeker jobSeeker, String token) {
+        this.jobSeekerId = jobSeeker.getJobSeekerId();
+        this.firstName = jobSeeker.getFirstName();
+        this.lastName = jobSeeker.getLastName();
+        this.email = jobSeeker.getUser().getEmail();
+        this.role = jobSeeker.getUser().getRole();
+        this.address = jobSeeker.getAddress();
+        this.profilePictureUrl = jobSeeker.getProfilePictureUrl();
+        this.linkedInUrl = jobSeeker.getLinkedInUrl();
+        this.resumeUrl = jobSeeker.getResumeUrl();
+        this.education = jobSeeker.getEducation();
+        this.workExperiences = jobSeeker.getWorkExperiences();
+        this.skills = jobSeeker.getSkills();
+        this.references = jobSeeker.getReferences();
+        this.token = token;
     }
 
     /*
@@ -180,6 +199,14 @@ public class OutgoingJobSeekerDTO {
 
     public void setReferences(List<Reference> references) {
         this.references = references;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     @Override

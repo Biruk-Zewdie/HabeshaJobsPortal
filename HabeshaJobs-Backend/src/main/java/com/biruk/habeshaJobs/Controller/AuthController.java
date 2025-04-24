@@ -3,6 +3,7 @@ package com.biruk.habeshaJobs.Controller;
 import com.biruk.habeshaJobs.DTO.*;
 import com.biruk.habeshaJobs.Service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,12 +40,17 @@ public class AuthController {
 
     }
 
-    @PostMapping("/login/")
+    @PostMapping("/login")
     public ResponseEntity <?> login (@RequestBody IncomingUserLoginDTO userLoginDTO){
         try {
             Object userObj = authService.login(userLoginDTO);
-
-            return ResponseEntity.ok(userObj);
+            String token = null;
+            if (userObj instanceof OutgoingJobSeekerDTO jobSeekerDTO){
+                token = jobSeekerDTO.getToken();
+            }else if (userObj instanceof OutgoingEmployerDTO employerDTO) {
+                token = employerDTO.getToken();
+            }
+            return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, "Bearer " + token).body(userObj);
         }catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }catch (Exception e){
