@@ -63,7 +63,9 @@ public class JWTUtil {
 
     //This method is used to extract the role from the JWT token.
     public User.Role extractRole(String token) {
-        return extractAllClaims(token).get("role", User.Role.class);
+        // the role is stored as a string in the JWT token, so we need to convert it to the User.Role enum
+        String roleString = extractAllClaims(token).get("role", String.class);
+        return User.Role.valueOf(roleString);
     }
 
 

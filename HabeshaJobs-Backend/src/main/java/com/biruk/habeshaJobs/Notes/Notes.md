@@ -6,6 +6,9 @@
 - the password should contain at least one digit
 - the password should contain at least one special character
 2. Custom Exception handling should be added
+3. Avoid duplicate job posting by the same employer
+4. Error message should be returned in a standard format when response is not successful.
+5. solve the problem of the token working/valid for 24 hours(until the token expires) even if the user logs out and logs back in.
 
 ## Features to be added in the future 
 1. JWT authentication should be added

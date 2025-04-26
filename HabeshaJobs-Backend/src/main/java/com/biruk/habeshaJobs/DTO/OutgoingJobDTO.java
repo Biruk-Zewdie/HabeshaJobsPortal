@@ -4,10 +4,11 @@ import com.biruk.habeshaJobs.Model.Common.Address;
 import com.biruk.habeshaJobs.Model.Job.Job;
 import com.biruk.habeshaJobs.Model.Job.JobDescription;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class JobDTO {
+public class OutgoingJobDTO {
 
     private UUID jobId;
     private String jobTitle;
@@ -22,15 +23,19 @@ public class JobDTO {
     private Job.JobType jobType;
     private JobDescription jobDescription;
     private LocalDateTime createdAt;
-    private OutgoingEmployerDTO employerDTO;
+    private LocalDateTime updatedAt;
+    private LocalDate applicationDeadline;
+    private int numberOfOpenings;
+    private OutgoingEmployerDTO employer;
 
 
-    public JobDTO() {
+    public OutgoingJobDTO() {
 
     }
 
-    public JobDTO(UUID jobId, String jobTitle, double salary, Address address, Job.JobType jobType,
-                  JobDescription jobDescription, LocalDateTime createdAt, OutgoingEmployerDTO employerDTO) {
+    public OutgoingJobDTO(UUID jobId, String jobTitle, double salary, Address address, Job.JobType jobType,
+                          JobDescription jobDescription, LocalDateTime createdAt, LocalDateTime updatedAt,
+                          LocalDate applicationDeadline, int numberOfOpenings, OutgoingEmployerDTO employer) {
 
         this.jobId = jobId;
         this.jobTitle = jobTitle;
@@ -39,7 +44,25 @@ public class JobDTO {
         this.jobType = jobType;
         this.jobDescription = jobDescription;
         this.createdAt = createdAt;
-        this.employerDTO = employerDTO;
+        this.updatedAt = updatedAt;
+        this.applicationDeadline = applicationDeadline;
+        this.numberOfOpenings = numberOfOpenings;
+        this.employer = employer;
+    }
+
+    public OutgoingJobDTO(Job job) {
+        this.jobId = job.getJobId();
+        this.jobTitle = job.getJobTitle();
+        this.salary = job.getSalary();
+        this.address = job.getAddress();
+        this.jobType = job.getJobType();
+        this.jobDescription = job.getJobDescription();
+        this.createdAt = job.getCreatedAt();
+        this.updatedAt = job.getUpdatedAt();
+        this.applicationDeadline = job.getApplicationDeadline();
+        this.numberOfOpenings = job.getNumberOfOpenings();
+        this.employer = new OutgoingEmployerDTO(job.getEmployer());
+
     }
 
     public UUID getJobId() {
@@ -98,26 +121,52 @@ public class JobDTO {
         this.createdAt = createdAt;
     }
 
-    public OutgoingEmployerDTO getEmployerDTO() {
-        return employerDTO;
+    public LocalDateTime getUpdatedAt () {
+        return updatedAt;
     }
 
-    public void setEmployerDTO(OutgoingEmployerDTO employerDTO) {
-        this.employerDTO = employerDTO;
+    public void setUpdatedAt (LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
+    public LocalDate getApplicationDeadline() {
+        return applicationDeadline;
+    }
+
+    public void setApplicationDeadline(LocalDate applicationDeadline) {
+        this.applicationDeadline = applicationDeadline;
+    }
+
+    public int getNumberOfOpenings() {
+        return numberOfOpenings;
+    }
+
+    public void setNumberOfOpenings(int numberOfOpenings) {
+        this.numberOfOpenings = numberOfOpenings;
+    }
+
+    public OutgoingEmployerDTO getEmployer() {
+        return employer;
+    }
+
+    public void setEmployerDTO(OutgoingEmployerDTO employer) {
+        this.employer = employer;
+    }
 
     @Override
     public String toString() {
-        return "JobDTO{" +
+        return "OutgoingJobDTO{" +
                 "jobId=" + jobId +
                 ", jobTitle='" + jobTitle + '\'' +
                 ", salary=" + salary +
-                ", address='" + address + '\'' +
+                ", address=" + address +
                 ", jobType=" + jobType +
                 ", jobDescription=" + jobDescription +
                 ", createdAt=" + createdAt +
-                ", employerDTO=" + employerDTO +
+                ", updatedAt=" + updatedAt +
+                ", applicationDeadline=" + applicationDeadline +
+                ", numberOfOpenings=" + numberOfOpenings +
+                ", employer=" + employer +
                 '}';
     }
 }

@@ -32,7 +32,7 @@ public class AuthService {
     @Autowired
     public AuthService (UserDAO userDAO, JobSeekerDAO jobSeekerDAO, EmployerDAO employerDAO,
                         FileStorageService fileStorageService, PasswordEncoder passwordEncoder,
-                        AuthenticationManager authenticationManager, JWTUtil jwtUtil) {
+                        JWTUtil jwtUtil, AuthenticationManager authenticationManager) {
 
         this.userDAO = userDAO;
         this.jobSeekerDAO = jobSeekerDAO;

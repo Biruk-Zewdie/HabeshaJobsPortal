@@ -6,6 +6,7 @@ import com.biruk.habeshaJobs.Model.JobApplication;
 import jakarta.persistence.*;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -33,11 +34,15 @@ public class Job {
     @Embedded
     private JobDescription jobDescription;
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
+    private LocalDate applicationDeadline;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private int numberOfOpenings;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employer_id", nullable = false)
     private Employer employer;
 
@@ -55,7 +60,8 @@ public class Job {
 
     public Job(UUID jobId, String jobTitle, double salary, Address address,
                JobType jobType, JobDescription jobDescription, LocalDateTime createdAt,
-               LocalDateTime updatedAt, Employer employer, List<JobApplication> jobApplications) {
+               LocalDateTime updatedAt, LocalDate applicationDeadline, int numberOfOpenings,
+               Employer employer, List<JobApplication> jobApplications) {
         this.jobId = jobId;
         this.jobTitle = jobTitle;
         this.salary = salary;
@@ -64,11 +70,17 @@ public class Job {
         this.jobDescription = jobDescription;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.applicationDeadline = applicationDeadline;
+        this.numberOfOpenings = numberOfOpenings;
         this.employer = employer;
         this.jobApplications = jobApplications;
     }
 
-
+    // The @PrePersist annotation is used to specify a method that should be called before the entity is persisted (saved) to the database.
+    @PreUpdate
+    public void setLastUpdated(){
+        this.updatedAt = LocalDateTime.now();
+    }
     //getters and setters
 
     public UUID getJobId() {
@@ -95,7 +107,7 @@ public class Job {
         this.salary = salary;
     }
 
-    public Address address() {
+    public Address getAddress() {
         return address;
     }
 
@@ -135,6 +147,22 @@ public class Job {
         this.updatedAt = updatedAt;
     }
 
+    public LocalDate getApplicationDeadline () {
+        return applicationDeadline;
+    }
+
+    public void setApplicationDeadline (LocalDate applicationDeadline) {
+        this.applicationDeadline = applicationDeadline;
+    }
+
+    public int getNumberOfOpenings () {
+        return numberOfOpenings;
+    }
+
+    public void setNumberOfOpenings (int numberOfOpenings) {
+        this.numberOfOpenings = numberOfOpenings;
+    }
+
     public Employer getEmployer() {
         return employer;
     }
@@ -170,6 +198,8 @@ public class Job {
                 ", jobDescription=" + jobDescription +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
+                ", applicationDeadline=" + applicationDeadline +
+                ", numberOfOpenings=" + numberOfOpenings +
                 ", employer=" + employer +
                 ", jobApplications=" + jobApplications +
                 '}';
