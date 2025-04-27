@@ -1,5 +1,6 @@
 package com.biruk.habeshaJobs.Model.Job;
 
+import com.fasterxml.jackson.annotation.JsonMerge;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embeddable;
@@ -38,18 +39,28 @@ public class JobDescription {
     */
     @ElementCollection
     @CollectionTable (name="Job_Responsibilities", joinColumns = @JoinColumn(name="job_ID"))
+    @JsonMerge // this is used to merge the responsibilities object when deserializing the JSON object
+    /*
+    @JsonMerge tells Jackson:
+    ➔ "Don't replace the whole thing. Only update fields you actually see in the JSON."
+    Without @JsonMerge = full object replacement ❌
+    With @JsonMerge = field-by-field updating ✅
+    */
     private List<String> responsibilities;
 
     @ElementCollection
     @CollectionTable (name="Job_Qualification", joinColumns = @JoinColumn(name = "job_ID"))
+    @JsonMerge
     private List <String> qualifications;
 
     @ElementCollection
     @CollectionTable(name="Skills_Required", joinColumns = @JoinColumn(name= "job_ID"))
+    @JsonMerge
     private List<String> skillsRequired;
 
     @ElementCollection
     @CollectionTable(name = "Benefits", joinColumns = @JoinColumn(name="job_ID"))
+    @JsonMerge
     private List <String> benefits;
 
 

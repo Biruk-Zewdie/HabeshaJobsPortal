@@ -3,6 +3,7 @@ package com.biruk.habeshaJobs.Model;
 import com.biruk.habeshaJobs.Model.Common.Address;
 import com.biruk.habeshaJobs.Model.Job.Job;
 import com.biruk.habeshaJobs.Model.User.User;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +39,7 @@ public class Employer {
     //the purpose of mappedBy in the @OneToMany annotation is to specify the field
 
     @OneToMany(mappedBy = "employer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference // this is used to prevent infinite recursion when serializing the job application object
     private List<Job> jobsPosted = new ArrayList<>();
 
     @OneToMany(mappedBy = "employer", cascade = CascadeType.ALL)

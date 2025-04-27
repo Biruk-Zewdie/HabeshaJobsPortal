@@ -3,6 +3,8 @@ package com.biruk.habeshaJobs.Model.Job;
 import com.biruk.habeshaJobs.Model.Common.Address;
 import com.biruk.habeshaJobs.Model.Employer;
 import com.biruk.habeshaJobs.Model.JobApplication;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonMerge;
 import jakarta.persistence.*;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +27,8 @@ public class Job {
     private String jobTitle;
 
     private double salary;
+
+    @JsonMerge // this is used to merge the address object when deserializing the JSON object
     private Address address;
 
     @Enumerated(EnumType.STRING)
@@ -32,6 +36,7 @@ public class Job {
 
 
     @Embedded
+    @JsonMerge
     private JobDescription jobDescription;
 
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -44,6 +49,7 @@ public class Job {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employer_id", nullable = false)
+    @JsonBackReference // this is used to prevent infinite recursion when serializing the employer object
     private Employer employer;
 
 

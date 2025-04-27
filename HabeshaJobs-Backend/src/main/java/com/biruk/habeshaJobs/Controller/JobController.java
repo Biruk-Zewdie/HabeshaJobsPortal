@@ -72,8 +72,8 @@ public class JobController {
         return ResponseEntity.ok(outgoingJobDTO);
     }
 
-    @GetMapping("/Employer/{employerId}")
-    public ResponseEntity <List<OutgoingJobDTO>> getJobsPostedByEmployer (@PathVariable UUID employerId) {
+    @GetMapping("/employer/{employerId}")
+    public ResponseEntity <List<OutgoingJobDTO>> getJobsPostedByEmployerId (@PathVariable UUID employerId) {
 
         List<OutgoingJobDTO> outgoingJobDTOs = jobService.getJobsByEmployerId(employerId);
 

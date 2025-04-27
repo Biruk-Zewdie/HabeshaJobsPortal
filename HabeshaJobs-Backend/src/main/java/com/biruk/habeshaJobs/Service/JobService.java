@@ -7,6 +7,7 @@ import com.biruk.habeshaJobs.DTO.IncomingJobDTO;
 import com.biruk.habeshaJobs.DTO.OutgoingJobDTO;
 import com.biruk.habeshaJobs.Model.Employer;
 import com.biruk.habeshaJobs.Model.Job.Job;
+import com.biruk.habeshaJobs.Model.JobApplication;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,37 +115,28 @@ public class JobService {
     // this method will update a job in the database by using a given job ID.
     public OutgoingJobDTO updateJob (UUID jobId, JsonNode patchNode) {
 
-        Job job = jobDAO.findById(jobId).orElseThrow(() ->
+        Job existingJob = jobDAO.findById(jobId).orElseThrow(() ->
                 new NoSuchElementException("Job with ID " + jobId + " not found"));
 
         try {
-            // Convert Job to JsonNode
-            JsonNode originalNode = objectMapper.valueToTree(job);
+            // Backup relationships that could break
+            Employer employer = existingJob.getEmployer();
+            List<JobApplication> applications = existingJob.getJobApplications();
 
-            //Merge patchNode into originalNode
-            JsonNode merged = objectMapper.readerForUpdating(originalNode).readValue(patchNode);
+            // Directly patch the existing Job object
+            objectMapper.readerForUpdating(existingJob).readValue(patchNode);
 
-            //convert merged node back to Job
-            Job updatedJob = objectMapper.treeToValue(merged, Job.class);
+            // Restore important relationships if needed
+            existingJob.setEmployer(employer);
+            existingJob.setJobApplications(applications);
 
-            // Ensure Id stays the same
-            updatedJob.setJobId(job.getJobId());
+            // Save and return
+            Job savedJob = jobDAO.save(existingJob);
 
-            // Save and return the updated job
-            return new OutgoingJobDTO(jobDAO.save(updatedJob));
-
+            return new OutgoingJobDTO(savedJob);
         }catch (Exception e){
             throw new RuntimeException("Failed to apply patch: " + e.getMessage());
 
         }
     }
-
-
-
-
-
-
-
-
-
 }
