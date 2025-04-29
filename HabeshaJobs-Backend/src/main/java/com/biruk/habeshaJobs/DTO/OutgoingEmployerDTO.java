@@ -19,6 +19,7 @@ public class OutgoingEmployerDTO {
     private String logoUrl;
     private Employer.CompanySize companySize;
     private LocalDateTime registrationDate;
+    private LocalDateTime profileLastUpdatedAt;
     private String token;
 
 
@@ -37,6 +38,7 @@ public class OutgoingEmployerDTO {
         this.logoUrl = employer.getLogoUrl();
         this.companySize = employer.getCompanySize();
         this.registrationDate = employer.getRegistrationDate();
+        this.profileLastUpdatedAt = employer.getProfileLastUpdatedAt();
         this.token = token;
     }
 
@@ -51,6 +53,7 @@ public class OutgoingEmployerDTO {
         this.logoUrl = employer.getLogoUrl();
         this.companySize = employer.getCompanySize();
         this.registrationDate = employer.getRegistrationDate();
+        this.profileLastUpdatedAt = employer.getProfileLastUpdatedAt();
         this.token = null;
     }
 
@@ -132,6 +135,14 @@ public class OutgoingEmployerDTO {
         this.registrationDate = registrationDate;
     }
 
+    public LocalDateTime getProfileLastUpdatedAt (){
+        return profileLastUpdatedAt;
+    }
+
+    public void setProfileLastUpdatedAt (LocalDateTime profileLastUpdatedAt){
+        this.profileLastUpdatedAt = profileLastUpdatedAt;
+    }
+
     public String getToken() {
         return token;
     }
@@ -153,6 +164,7 @@ public class OutgoingEmployerDTO {
                 ", logoUrl='" + logoUrl + '\'' +
                 ", companySize='" + companySize + '\'' +
                 ", registrationDate=" + registrationDate +
+                ", profileLastUpdatedAt=" + profileLastUpdatedAt +
                 '}';
     }
 }

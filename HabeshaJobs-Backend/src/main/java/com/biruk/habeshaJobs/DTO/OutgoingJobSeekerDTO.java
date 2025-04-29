@@ -7,6 +7,7 @@ import com.biruk.habeshaJobs.Model.JobSeeker.Reference;
 import com.biruk.habeshaJobs.Model.JobSeeker.WorkExperience;
 import com.biruk.habeshaJobs.Model.User.User;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -29,6 +30,8 @@ public class OutgoingJobSeekerDTO {
     private List<WorkExperience> workExperiences;
     private Map<String, JobSeeker.SkillLevel> skills;
     private List <Reference> references;
+    private LocalDateTime dateOfJoining;
+    private LocalDateTime profileLastUpdatedAt;
     private String token;
 
     public OutgoingJobSeekerDTO() {
@@ -53,6 +56,8 @@ public class OutgoingJobSeekerDTO {
         this.workExperiences = jobSeeker.getWorkExperiences();
         this.skills = jobSeeker.getSkills();
         this.references = jobSeeker.getReferences();
+        this.dateOfJoining = jobSeeker.getDateOfJoining();
+        this.profileLastUpdatedAt = jobSeeker.getProfileLastUpdatedAt();
         this.token = null;
     }
 
@@ -70,6 +75,8 @@ public class OutgoingJobSeekerDTO {
         this.workExperiences = jobSeeker.getWorkExperiences();
         this.skills = jobSeeker.getSkills();
         this.references = jobSeeker.getReferences();
+        this.dateOfJoining = jobSeeker.getDateOfJoining();
+        this.profileLastUpdatedAt = jobSeeker.getProfileLastUpdatedAt();
         this.token = token;
     }
 
@@ -80,7 +87,7 @@ public class OutgoingJobSeekerDTO {
     * savedJobSeeker.getUser().getEmail() - this is nested, so we are assembling it piece by piece.
     * */
 
-    public OutgoingJobSeekerDTO(UUID jobSeekerId, String firstName, String lastName, String email, User.Role role, Address address, String profilePictureUrl, String linkedInUrl, String resumeUrl, List<Education> education, List<WorkExperience> workExperiences, Map<String, JobSeeker.SkillLevel> skills, List<Reference> references) {
+    public OutgoingJobSeekerDTO(UUID jobSeekerId, String firstName, String lastName, String email, User.Role role, Address address, String profilePictureUrl, String linkedInUrl, String resumeUrl, List<Education> education, List<WorkExperience> workExperiences, Map<String, JobSeeker.SkillLevel> skills, List<Reference> references, LocalDateTime dateOfJoining, LocalDateTime profileLastUpdatedAt) {
         this.jobSeekerId = jobSeekerId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -94,6 +101,8 @@ public class OutgoingJobSeekerDTO {
         this.workExperiences = workExperiences;
         this.skills = skills;
         this.references = references;
+        this.dateOfJoining = dateOfJoining;
+        this.profileLastUpdatedAt = profileLastUpdatedAt;
     }
 
 
@@ -201,6 +210,23 @@ public class OutgoingJobSeekerDTO {
         this.references = references;
     }
 
+    public LocalDateTime getDateOfJoining () {
+        return dateOfJoining;
+    }
+
+    public void setDateOfJoining (LocalDateTime dateOfJoining) {
+        this.dateOfJoining = dateOfJoining;
+
+    }
+
+    public LocalDateTime getProfileLastUpdatedAt () {
+        return profileLastUpdatedAt;
+    }
+
+    public void setProfileLastUpdatedAt (LocalDateTime profileLastUpdatedAt) {
+        this.profileLastUpdatedAt = profileLastUpdatedAt;
+    }
+
     public String getToken() {
         return token;
     }
@@ -225,6 +251,8 @@ public class OutgoingJobSeekerDTO {
                 ", workExperiences=" + workExperiences +
                 ", skills=" + skills +
                 ", references=" + references +
+                ", dateOfJoining=" + dateOfJoining +
+                ", profileLastUpdatedAt=" + profileLastUpdatedAt +
                 '}';
     }
 }

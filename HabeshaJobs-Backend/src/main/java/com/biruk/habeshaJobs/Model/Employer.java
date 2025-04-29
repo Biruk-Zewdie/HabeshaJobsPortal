@@ -4,6 +4,7 @@ import com.biruk.habeshaJobs.Model.Common.Address;
 import com.biruk.habeshaJobs.Model.Job.Job;
 import com.biruk.habeshaJobs.Model.User.User;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonMerge;
 import jakarta.persistence.*;
 import org.springframework.stereotype.Component;
 
@@ -28,11 +29,16 @@ public class Employer {
     private String phoneNumber;
 
     @Embedded
+    @JsonMerge
     private Address address;
 
     private String industrySector;
+
+    @Column (length = 1000) //also I will use @Size annotation in IncomingEmployerRegDTO to include the message and mention the size.
     private String companyDescription;
     private LocalDateTime registrationDate = LocalDateTime.now();
+    @Column(name = "updated_at")
+    private LocalDateTime profileLastUpdatedAt = LocalDateTime.now();
     private String logoUrl;
     private CompanySize companySize;
 
@@ -40,6 +46,7 @@ public class Employer {
 
     @OneToMany(mappedBy = "employer", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference // this is used to prevent infinite recursion when serializing the job application object
+    @JsonMerge
     private List<Job> jobsPosted = new ArrayList<>();
 
     @OneToMany(mappedBy = "employer", cascade = CascadeType.ALL)
@@ -53,7 +60,7 @@ public class Employer {
     }
 
     public Employer(UUID employerId, String companyName, String phoneNumber, Address address, String industrySector, String companyDescription,
-                    LocalDateTime registrationDate, String logoUrl, CompanySize companySize, List<Job> jobsPosted,
+                    LocalDateTime registrationDate, LocalDateTime profileLastUpdatedAt, String logoUrl, CompanySize companySize, List<Job> jobsPosted,
                     List <JobApplication> jobApplications, User user) {
 
         this.employerId = employerId;
@@ -63,11 +70,17 @@ public class Employer {
         this.industrySector = industrySector;
         this.companyDescription = companyDescription;
         this.registrationDate = registrationDate;
+        this.profileLastUpdatedAt = profileLastUpdatedAt;
         this.logoUrl = logoUrl;
         this.companySize = companySize;
         this.jobsPosted = jobsPosted;
         this.jobApplications = jobApplications;
         this.user = user;
+    }
+
+    @PreUpdate
+    public void setProfileLastUpdate(){
+        this.profileLastUpdatedAt = LocalDateTime.now();
     }
 
     public UUID getEmployerId() {
@@ -126,6 +139,14 @@ public class Employer {
         this.registrationDate = registrationDate;
     }
 
+    public LocalDateTime getProfileLastUpdatedAt () {
+        return profileLastUpdatedAt;
+    }
+
+    public void setProfileLastUpdatedAt (LocalDateTime profileLastUpdatedAt){
+        this.profileLastUpdatedAt = profileLastUpdatedAt;
+    }
+
     public String getLogoUrl() {
         return logoUrl;
     }
@@ -166,6 +187,7 @@ public class Employer {
         this.user = user;
     }
 
+
     public enum CompanySize{
         Small,
         Medium,
@@ -182,6 +204,7 @@ public class Employer {
                 ", industrySector='" + industrySector + '\'' +
                 ", companyDescription='" + companyDescription + '\'' +
                 ", registrationDate=" + registrationDate +
+                ", profileLastUpdatedAt=" + profileLastUpdatedAt +
                 ", logoUrl='" + logoUrl + '\'' +
                 ", companySize=" + companySize +
                 ", jobsPosted=" + jobsPosted +

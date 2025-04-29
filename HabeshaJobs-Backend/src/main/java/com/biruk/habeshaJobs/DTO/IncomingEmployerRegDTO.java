@@ -2,6 +2,7 @@ package com.biruk.habeshaJobs.DTO;
 
 import com.biruk.habeshaJobs.Model.Common.Address;
 import com.biruk.habeshaJobs.Model.Employer;
+import jakarta.validation.constraints.Size;
 import org.springframework.web.multipart.MultipartFile;
 
 // this DTO is used to register an employer and the fields below are the fields that are required to register an employer.
@@ -11,6 +12,8 @@ public class IncomingEmployerRegDTO {
     private String phoneNumber;
     private Address address;
     private String industrySector;
+
+    @Size(max = 1000, message = "Company description must not exceed 1000 characters")
     private String companyDescription;
     private MultipartFile logoPicture;
     private Employer.CompanySize companySize;

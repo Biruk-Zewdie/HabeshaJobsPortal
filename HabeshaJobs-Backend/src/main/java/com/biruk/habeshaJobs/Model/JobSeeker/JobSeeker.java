@@ -3,6 +3,7 @@ package com.biruk.habeshaJobs.Model.JobSeeker;
 import com.biruk.habeshaJobs.Model.Common.Address;
 import com.biruk.habeshaJobs.Model.JobApplication;
 import com.biruk.habeshaJobs.Model.User.User;
+import com.fasterxml.jackson.annotation.JsonMerge;
 import jakarta.persistence.*;
 import org.springframework.stereotype.Component;
 
@@ -32,11 +33,13 @@ public class JobSeeker {
     private LocalDate dateOfBirth;
 
     @Embedded
+    @JsonMerge // used to update specific field in nested fields or arrays without replacing the whole object. The old field will be replaced with the new one.
     private Address address;
 
 
     @ElementCollection
     @CollectionTable(name = "jobSeeker_education", joinColumns = @JoinColumn(name = "jobSeekerId"))
+    @JsonMerge
     private List<Education> education = new ArrayList<>();
 //    private List<String> skill;
 
@@ -50,19 +53,25 @@ public class JobSeeker {
     @CollectionTable(name = "jobSeeker_skills", joinColumns = @JoinColumn(name = "jobSeekerId"))
     @MapKeyColumn(name = "skill_name")
     @Column(name = "skill_level")
+    @JsonMerge
     private Map<String, SkillLevel> skills = new HashMap<>();
 
     //these are used to track the jobSeeker date of sign up
     private LocalDateTime dateOfJoining = LocalDateTime.now();
 
+    @Column(name = "updated_at")
+    private LocalDateTime profileLastUpdatedAt = LocalDateTime.now();
+
     private String resumeUrl;
 
     @ElementCollection
     @CollectionTable (name = "jobSeeker_workExperience", joinColumns = @JoinColumn(name = "jobSeekerId"))
+    @JsonMerge
     private List<WorkExperience> workExperiences = new ArrayList<>();
 
     @ElementCollection
     @CollectionTable(name = "jobSeeker_Reference", joinColumns = @JoinColumn(name = "jobSeekerId"))
+    @JsonMerge
     private List<Reference> references = new ArrayList<>();
 
 
@@ -73,6 +82,11 @@ public class JobSeeker {
     @JoinColumn (name = "userId", nullable = false)
     private User user;
 
+    @PreUpdate
+    public void setProfileLastUpdate(){
+        this.profileLastUpdatedAt = LocalDateTime.now();
+    }
+
 
     public JobSeeker() {
 
@@ -80,7 +94,7 @@ public class JobSeeker {
 
     public JobSeeker(UUID jobSeekerId, String firstName, String lastName, String phoneNumber, LocalDate dateOfBirth,
                      Address address, List<Education> education, String profilePictureUrl, IsActiveJobSeeker isActiveJobSeeker,
-                     String linkedInUrl, Map<String, SkillLevel> skills, LocalDateTime dateOfJoining, String resumeUrl,
+                     String linkedInUrl, Map<String, SkillLevel> skills, LocalDateTime dateOfJoining, LocalDateTime profileLastUpdatedAt, String resumeUrl,
                      List<WorkExperience> workExperiences, List<Reference> references, List <JobApplication> jobApplication, User user) {
         this.jobSeekerId = jobSeekerId;
         this.firstName = firstName;
@@ -94,6 +108,7 @@ public class JobSeeker {
         this.linkedInUrl = linkedInUrl;
         this.skills = skills;
         this.dateOfJoining = dateOfJoining;
+        this.profileLastUpdatedAt = profileLastUpdatedAt;
         this.resumeUrl = resumeUrl;
         this.workExperiences = workExperiences;
         this.references = references;
@@ -195,6 +210,15 @@ public class JobSeeker {
 
     public void setDateOfJoining(LocalDateTime dateOfJoining) {
         this.dateOfJoining = dateOfJoining;
+    }
+
+    public LocalDateTime getProfileLastUpdatedAt () {
+        return profileLastUpdatedAt;
+    }
+
+    public void setProfileLastUpdatedAt (LocalDateTime profileLastUpdatedAt){
+
+        this.profileLastUpdatedAt = profileLastUpdatedAt;
     }
 
     public String getResumeUrl() {
