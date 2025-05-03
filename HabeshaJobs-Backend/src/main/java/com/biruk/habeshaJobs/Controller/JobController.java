@@ -2,9 +2,12 @@ package com.biruk.habeshaJobs.Controller;
 
 import com.biruk.habeshaJobs.DTO.IncomingJobDTO;
 import com.biruk.habeshaJobs.DTO.OutgoingJobDTO;
+import com.biruk.habeshaJobs.Model.Job.Job;
+import com.biruk.habeshaJobs.Model.JobSeeker.JobSeeker;
 import com.biruk.habeshaJobs.SecurityConfig.JWTUtil;
 import com.biruk.habeshaJobs.Service.JobService;
 import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -76,6 +79,45 @@ public class JobController {
     public ResponseEntity <List<OutgoingJobDTO>> getJobsPostedByEmployerId (@PathVariable UUID employerId) {
 
         List<OutgoingJobDTO> outgoingJobDTOs = jobService.getJobsByEmployerId(employerId);
+
+        return ResponseEntity.ok(outgoingJobDTOs);
+    }
+
+    // The below methods are for filtering jobs by different criteria.
+
+    @GetMapping("/search/title")
+    public ResponseEntity<List<OutgoingJobDTO>> getJobsByJobTitle(@RequestParam String jobTitle) {
+
+        List<OutgoingJobDTO> outgoingJobDTOs = jobService.searchJobsByJobTitle(jobTitle);
+
+        return ResponseEntity.ok(outgoingJobDTOs);
+    }
+
+    @GetMapping("/search/salary")
+    public ResponseEntity<List<OutgoingJobDTO>> getJobsBySalary(@RequestParam double minSalary, @RequestParam double maxSalary){
+
+        List <OutgoingJobDTO> outgoingJobDTOs = jobService.searchBySalaryRange(minSalary, maxSalary);
+
+        return ResponseEntity.ok(outgoingJobDTOs);
+    }
+
+    @GetMapping("/search/jobType")
+    public ResponseEntity<List<OutgoingJobDTO>> getJobsByJobType(@RequestParam Job.JobType jobType){
+        List <OutgoingJobDTO> outgoingJobDTOs = jobService.searchByJobType(jobType);
+        return ResponseEntity.ok(outgoingJobDTOs);
+    }
+
+    @GetMapping("/search/recentJobs")
+    public ResponseEntity<List<OutgoingJobDTO>> getJobsPostedWithinNDays (@RequestParam int days){
+        List <OutgoingJobDTO> outgoingJobDTOs = jobService.findJobsPostedInLastDays(days);
+
+        return ResponseEntity.ok(outgoingJobDTOs);
+    }
+
+    @GetMapping("/search/nearByJobs")
+    public ResponseEntity<List<OutgoingJobDTO>> findNearByJobs (@RequestParam UUID jobSeekerId, double radiusInMiles){
+
+        List<OutgoingJobDTO> outgoingJobDTOs = jobService.findNearByJobsForJobSeeker(jobSeekerId, radiusInMiles);
 
         return ResponseEntity.ok(outgoingJobDTOs);
     }

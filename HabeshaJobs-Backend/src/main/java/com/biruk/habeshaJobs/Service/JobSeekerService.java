@@ -3,9 +3,12 @@ package com.biruk.habeshaJobs.Service;
 import com.biruk.habeshaJobs.DAO.JobSeekerDAO;
 import com.biruk.habeshaJobs.DTO.OutgoingJobDTO;
 import com.biruk.habeshaJobs.DTO.OutgoingJobSeekerDTO;
+import com.biruk.habeshaJobs.Model.Common.GeoHelper;
 import com.biruk.habeshaJobs.Model.JobSeeker.JobSeeker;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityNotFoundException;
+import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,11 +22,13 @@ public class JobSeekerService {
 
     private final JobSeekerDAO jobSeekerDAO;
     private final ObjectMapper objectMapper;
+    private final GeoHelper geoHelper;
 
     @Autowired
-    public JobSeekerService (JobSeekerDAO jobSeekerDAO, ObjectMapper objectMapper){
+    public JobSeekerService (JobSeekerDAO jobSeekerDAO, ObjectMapper objectMapper, GeoHelper geoHelper){
         this.jobSeekerDAO = jobSeekerDAO;
         this.objectMapper = objectMapper;
+        this.geoHelper = geoHelper;
     }
 
     public List<OutgoingJobSeekerDTO> getAllJobSeekers () {
@@ -70,6 +75,9 @@ public class JobSeekerService {
 
             objectMapper.readerForUpdating(jobSeeker).readValue(patchNode);
 
+            if (jobSeeker.getAddress() != null) {
+                jobSeeker.setLocation(geoHelper.createPointFromAddress(jobSeeker.getAddress()));
+            }
             JobSeeker updatedJobSeeker = jobSeekerDAO.save(jobSeeker);
 
             return new OutgoingJobSeekerDTO(updatedJobSeeker);
@@ -78,6 +86,16 @@ public class JobSeekerService {
         }catch (Exception e){
             throw new RuntimeException("Failed to apply patch: " + e.getMessage());
         }
+    }
+
+    public Point getJobSeekerLocation (UUID jobSeekersId){
+
+        JobSeeker jobSeeker = jobSeekerDAO.findById(jobSeekersId).orElseThrow(() ->
+                new EntityNotFoundException("Job seeker not found")
+        );
+
+        return jobSeeker.getLocation();
+
     }
 
 

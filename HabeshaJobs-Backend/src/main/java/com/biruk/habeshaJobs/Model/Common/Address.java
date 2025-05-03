@@ -1,14 +1,21 @@
 package com.biruk.habeshaJobs.Model.Common;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class Address {
 
     private String streetAddress;
+
+    @Column(nullable = false)
     private String city;
+
+    @Column(nullable = false)
     private String state;
     private String country;
+
+    @Column(nullable = false)
     private String zipCode;
 
 

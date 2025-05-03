@@ -5,13 +5,17 @@ import com.biruk.habeshaJobs.DAO.EmployerDAO;
 import com.biruk.habeshaJobs.DAO.JobDAO;
 import com.biruk.habeshaJobs.DTO.IncomingJobDTO;
 import com.biruk.habeshaJobs.DTO.OutgoingJobDTO;
+import com.biruk.habeshaJobs.Model.Common.GeoHelper;
 import com.biruk.habeshaJobs.Model.Employer;
 import com.biruk.habeshaJobs.Model.Job.Job;
 import com.biruk.habeshaJobs.Model.JobApplication;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -21,15 +25,19 @@ import java.util.UUID;
 public class JobService {
 
     private final JobDAO jobDAO;
+    private final JobSeekerService jobSeekerService;
     private final EmployerDAO employerDAO;
     private final ObjectMapper objectMapper;
+    private final GeoHelper geoHelper;
 
 
     @Autowired
-    public JobService (JobDAO jobDAO, EmployerDAO employerDAO, ObjectMapper objectMapper) {
+    public JobService (JobDAO jobDAO, JobSeekerService jobSeekerService, EmployerDAO employerDAO, ObjectMapper objectMapper, GeoHelper geoHelper) {
         this.jobDAO = jobDAO;
+        this.jobSeekerService = jobSeekerService;
         this.employerDAO = employerDAO;
         this.objectMapper = objectMapper;
+        this.geoHelper = geoHelper;
     }
 
 
@@ -50,6 +58,9 @@ public class JobService {
         job.setApplicationDeadline(incomingJobDTO.getApplicationDeadline());
         job.setNumberOfOpenings(incomingJobDTO.getNumberOfOpenings());
         job.setEmployer(employer);
+
+        // Set the location using the GeoHelper
+        job.setLocation(geoHelper.createPointFromAddress(incomingJobDTO.getAddress()));
 
         Job savedJob = jobDAO.save(job);
 
@@ -126,6 +137,10 @@ public class JobService {
             // Directly patch the existing Job object
             objectMapper.readerForUpdating(existingJob).readValue(patchNode);
 
+            if (existingJob.getAddress() != null){
+                existingJob.setLocation(geoHelper.createPointFromAddress(existingJob.getAddress()));
+            }
+
             // Restore important relationships if needed
             existingJob.setEmployer(employer);
             existingJob.setJobApplications(applications);
@@ -139,4 +154,93 @@ public class JobService {
 
         }
     }
+
+    // all the methods below are used to filter the job based on different criteria.
+
+    public List<OutgoingJobDTO> searchJobsByJobTitle (String jobTitle) {
+
+        List<Job> jobs = jobDAO.findByJobTitleContainingIgnoreCase(jobTitle);
+
+        return jobs.stream().map(job -> new OutgoingJobDTO(job)).toList();
+    }
+
+    public List <OutgoingJobDTO> searchBySalaryRange (double min, double max) {
+
+        List <Job> jobs = jobDAO.findBySalaryBetween(min, max);
+
+        return jobs.stream().map(job -> new OutgoingJobDTO(job)).toList();
+    }
+
+    public List <OutgoingJobDTO> searchByJobType(Job.JobType jobType){
+
+        List<Job> jobs = jobDAO.findByJobType(jobType);
+
+        return jobs.stream().map(job -> new OutgoingJobDTO(job)).toList();
+    }
+
+    public List<OutgoingJobDTO> findJobsPostedInLastDays (int days){
+        LocalDateTime endDate = LocalDateTime.now();
+        LocalDateTime startDate = endDate.minusDays(days);
+        List <Job> jobs = jobDAO.findByCreatedAtBetween(startDate, endDate);
+
+        return jobs.stream().map(job -> new OutgoingJobDTO(job)).toList();
+    }
+
+    public List <OutgoingJobDTO> findNearByJobsForJobSeeker (UUID jobSeekerId, double radiusInMiles){
+
+        Point jSeekerLocation = jobSeekerService.getJobSeekerLocation(jobSeekerId);
+
+        if (jSeekerLocation == null){
+            throw new IllegalStateException("jobSeeker location can not be null");
+        }
+        double jSeekerLat = jSeekerLocation.getY();
+        double jSeekerLon = jSeekerLocation.getX();
+        double radiusInMeters = radiusInMiles * 1609.34;      //convert miles to meters
+
+        List<Job> jobs = jobDAO.findByNearbyJobs(jSeekerLat, jSeekerLon, radiusInMeters);
+
+        return jobs.stream().map(job -> new OutgoingJobDTO(job)).toList();
+
+        //return findNearByJobs(jSeekerLat, jSeekerLon, radiusInKM);
+
+
+    }
+
+    /*
+    *Warning: the below 2 methods are deprecated and not used in the codebase. Commented out for reference purpose.
+    * Why are they deprecated?
+    * ST_DWithin already calculates distance geographically using PostGIS, just like haversine, but much faster and optimized via spatial indexing.
+	* You’re filtering directly in the database, so:
+	    1. You don’t load unnecessary job records into memory.
+	    2. You avoid doing distance math in Java.
+	    3. You improve performance for large datasets.
+     */
+
+//    public List<OutgoingJobDTO> findNearByJobs (double jSeekerLat, double jSeekerLon, double radiusInKM){
+//
+//        List<Job> allJobs = jobDAO.findAll();
+//
+//        return allJobs.stream().filter(job -> {
+//            double jobLat = job.getLocation().getY();
+//            double jobLon = job.getLocation().getX();
+//            double distance = haversine (jSeekerLat, jSeekerLon, jobLat, jobLon);
+//            return distance <= radiusInKM;
+//        }).map(job -> new OutgoingJobDTO(job)).toList();
+//    }
+//
+//    // Haversine formula to calculate the distance between two points on the Earth
+//    private double haversine(double jSeekerLat, double jSeekerLon, double jobLat, double jobLon) {
+//
+//        final int EARTH_RADIUS_KM = 6371;
+//        double latDistanceInRad = Math.toRadians(jobLat - jSeekerLat);
+//        double lonDistanceInRad = Math.toRadians(jobLon - jSeekerLon);
+//        double a = Math.sin(latDistanceInRad/2) * Math.sin(latDistanceInRad/2) +
+//                Math.cos(Math.toRadians(jSeekerLat)) * Math.cos(Math.toRadians(jobLat)) *
+//                        Math.sin(lonDistanceInRad/2) * Math.sin(lonDistanceInRad/2);
+//        double angularDistance = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+//        return EARTH_RADIUS_KM * angularDistance;
+//
+//    }
+
+
 }

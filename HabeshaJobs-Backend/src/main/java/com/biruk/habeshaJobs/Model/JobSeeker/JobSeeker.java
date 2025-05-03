@@ -5,6 +5,7 @@ import com.biruk.habeshaJobs.Model.JobApplication;
 import com.biruk.habeshaJobs.Model.User.User;
 import com.fasterxml.jackson.annotation.JsonMerge;
 import jakarta.persistence.*;
+import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -35,6 +36,11 @@ public class JobSeeker {
     @Embedded
     @JsonMerge // used to update specific field in nested fields or arrays without replacing the whole object. The old field will be replaced with the new one.
     private Address address;
+
+    //Point → Refers to the geometry type, in this case a single point with latitude and longitude.
+    //4326 → Refers to the SRID (Spatial Reference Identifier) for WGS 84, which is a standard for latitude and longitude coordinates.
+    @Column(columnDefinition = "geometry(point, 4326)")
+    private Point location;
 
 
     @ElementCollection
@@ -93,7 +99,7 @@ public class JobSeeker {
     }
 
     public JobSeeker(UUID jobSeekerId, String firstName, String lastName, String phoneNumber, LocalDate dateOfBirth,
-                     Address address, List<Education> education, String profilePictureUrl, IsActiveJobSeeker isActiveJobSeeker,
+                     Address address, Point location, List<Education> education, String profilePictureUrl, IsActiveJobSeeker isActiveJobSeeker,
                      String linkedInUrl, Map<String, SkillLevel> skills, LocalDateTime dateOfJoining, LocalDateTime profileLastUpdatedAt, String resumeUrl,
                      List<WorkExperience> workExperiences, List<Reference> references, List <JobApplication> jobApplication, User user) {
         this.jobSeekerId = jobSeekerId;
@@ -102,6 +108,7 @@ public class JobSeeker {
         this.phoneNumber = phoneNumber;
         this.dateOfBirth = dateOfBirth;
         this.address = address;
+        this.location = location;
         this.education = education;
         this.profilePictureUrl = profilePictureUrl;
         this.isActiveJobSeeker = isActiveJobSeeker;
@@ -162,6 +169,14 @@ public class JobSeeker {
 
     public void setAddress (Address address) {
         this.address = address;
+    }
+
+    public Point getLocation () {
+        return location;
+    }
+
+    public void setLocation (Point location) {
+        this.location = location;
     }
 
     public List<Education> getEducation() {

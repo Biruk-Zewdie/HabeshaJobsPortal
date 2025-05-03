@@ -6,6 +6,7 @@ import com.biruk.habeshaJobs.DAO.UserDAO;
 import com.biruk.habeshaJobs.DTO.*;
 import com.biruk.habeshaJobs.Exceptions.EmailAlreadyExistsException;
 import com.biruk.habeshaJobs.Interfaces.FileStorageService;
+import com.biruk.habeshaJobs.Model.Common.GeoHelper;
 import com.biruk.habeshaJobs.Model.Employer;
 import com.biruk.habeshaJobs.Model.JobSeeker.JobSeeker;
 import com.biruk.habeshaJobs.Model.User.User;
@@ -28,11 +29,12 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JWTUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
+    private final GeoHelper geoHelper;
 
     @Autowired
     public AuthService (UserDAO userDAO, JobSeekerDAO jobSeekerDAO, EmployerDAO employerDAO,
                         FileStorageService fileStorageService, PasswordEncoder passwordEncoder,
-                        JWTUtil jwtUtil, AuthenticationManager authenticationManager) {
+                        JWTUtil jwtUtil, AuthenticationManager authenticationManager, GeoHelper geoHelper) {
 
         this.userDAO = userDAO;
         this.jobSeekerDAO = jobSeekerDAO;
@@ -41,6 +43,7 @@ public class AuthService {
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         this.authenticationManager = authenticationManager;
+        this.geoHelper = geoHelper;
     }
 
     /*
@@ -133,6 +136,9 @@ public class AuthService {
             jobSeeker.setWorkExperiences(JSeekerRegDTO.getWorkExperiences());
             jobSeeker.setReferences(JSeekerRegDTO.getReferences());
             jobSeeker.setUser(user);
+
+            // set the location using the GeoHelper
+            jobSeeker.setLocation(geoHelper.createPointFromAddress(JSeekerRegDTO.getAddress()));
 
             //Save the JobSeeker in our database
             JobSeeker savedJobSeeker = jobSeekerDAO.save(jobSeeker);

@@ -6,6 +6,7 @@ import com.biruk.habeshaJobs.Model.JobApplication;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonMerge;
 import jakarta.persistence.*;
+import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -15,7 +16,7 @@ import java.util.UUID;
 
 @Component
 @Entity
-@Table(name = "Job")
+@Table(name = "job")
 public class Job {
 
     @Id
@@ -28,8 +29,12 @@ public class Job {
 
     private double salary;
 
+    @Embedded
     @JsonMerge // this is used to merge the address object when deserializing the JSON object
     private Address address;
+
+    @Column(columnDefinition = "geometry(point, 4326)")
+    private Point location; // this is used to store the location of the job in a spatial format. This will be used to find jobs based on location.
 
     @Enumerated(EnumType.STRING)
     private JobType jobType;
@@ -64,7 +69,7 @@ public class Job {
 
     //All args constructor
 
-    public Job(UUID jobId, String jobTitle, double salary, Address address,
+    public Job(UUID jobId, String jobTitle, double salary, Address address, Point location,
                JobType jobType, JobDescription jobDescription, LocalDateTime createdAt,
                LocalDateTime updatedAt, LocalDate applicationDeadline, int numberOfOpenings,
                Employer employer, List<JobApplication> jobApplications) {
@@ -72,6 +77,7 @@ public class Job {
         this.jobTitle = jobTitle;
         this.salary = salary;
         this.address = address;
+        this.location = location;
         this.jobType = jobType;
         this.jobDescription = jobDescription;
         this.createdAt = createdAt;
@@ -119,6 +125,14 @@ public class Job {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public Point getLocation () {
+        return location;
+    }
+
+    public void setLocation (Point location) {
+        this.location = location;
     }
 
     public JobType getJobType() {
@@ -190,7 +204,8 @@ public class Job {
         partTime,
         contract,
         internship,
-        remote
+        remote,
+        hybrid
     }
 
     @Override
@@ -200,6 +215,7 @@ public class Job {
                 ", jobTitle='" + jobTitle + '\'' +
                 ", salary=" + salary +
                 ", address='" + address + '\'' +
+                ", location=" + location +
                 ", jobType=" + jobType +
                 ", jobDescription=" + jobDescription +
                 ", createdAt=" + createdAt +
