@@ -122,4 +122,12 @@ public class JobController {
         return ResponseEntity.ok(outgoingJobDTOs);
     }
 
+    @GetMapping("/search/matchingSkills/{jobSeekerId}")
+    public ResponseEntity<List<OutgoingJobDTO>> findMatchingJobsWithJobSeekerSkills(@PathVariable UUID jobSeekerId) {
+
+        List<OutgoingJobDTO> outgoingJobDTOs = jobService.findJobsMatchingJobSeekerSkills(jobSeekerId);
+
+        return ResponseEntity.ok(outgoingJobDTOs);
+    }
+
 }

@@ -49,17 +49,22 @@ public class JobDescription {
     private List<String> responsibilities;
 
     @ElementCollection
-    @CollectionTable (name="Job_Qualification", joinColumns = @JoinColumn(name = "job_ID"))
+    @CollectionTable (name="Job_Qualification", joinColumns = @JoinColumn(name = "job_Id"))
     @JsonMerge
     private List <String> qualifications;
 
-    @ElementCollection
-    @CollectionTable(name="Skills_Required", joinColumns = @JoinColumn(name= "job_ID"))
-    @JsonMerge
-    private List<String> skillsRequired;
+    /*Deprecated
+    *The below field is deprecated because I have to normalize the skillsRequired field in order to efficiently match the jobSeeker skill with job required skill using query.
+    * */
+//    @ElementCollection
+//    @CollectionTable(name="Skills_Required", joinColumns = @JoinColumn(name= "job_Id"))
+//    @JsonMerge
+//    private List<String> skillsRequired;
+
+
 
     @ElementCollection
-    @CollectionTable(name = "Benefits", joinColumns = @JoinColumn(name="job_ID"))
+    @CollectionTable(name = "Benefits", joinColumns = @JoinColumn(name="job_Id"))
     @JsonMerge
     private List <String> benefits;
 
@@ -69,11 +74,10 @@ public class JobDescription {
     }
 
     //all args constructor
-    public JobDescription(List<String> responsibilities, List<String> qualifications,
-                          List<String> skillsRequired, List<String> benefits) {
+    public JobDescription(List<String> responsibilities, List<String> qualifications, List<String> benefits) {
         this.responsibilities = responsibilities;
         this.qualifications = qualifications;
-        this.skillsRequired = skillsRequired;
+//        this.skillsRequired = skillsRequired;
         this.benefits = benefits;
     }
 
@@ -93,14 +97,14 @@ public class JobDescription {
     public void setQualifications(List<String> qualifications) {
         this.qualifications = qualifications;
     }
-
-    public List<String> getSkillsRequired() {
-        return skillsRequired;
-    }
-
-    public void setSkillsRequired(List<String> skillsRequired) {
-        this.skillsRequired = skillsRequired;
-    }
+//
+//    public List<String> getSkillsRequired() {
+//        return skillsRequired;
+//    }
+//
+//    public void setSkillsRequired(List<String> skillsRequired) {
+//        this.skillsRequired = skillsRequired;
+//    }
 
     public List<String> getBenefits() {
         return benefits;
@@ -115,7 +119,7 @@ public class JobDescription {
         return "JobDescription{" +
                 "responsibilities=" + responsibilities +
                 ", qualifications=" + qualifications +
-                ", skillsRequired=" + skillsRequired +
+//                ", skillsRequired=" + skillsRequired +
                 ", benefits=" + benefits +
                 '}';
     }

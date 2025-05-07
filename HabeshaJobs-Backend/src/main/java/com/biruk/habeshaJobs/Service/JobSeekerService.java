@@ -1,6 +1,7 @@
 package com.biruk.habeshaJobs.Service;
 
 import com.biruk.habeshaJobs.DAO.JobSeekerDAO;
+import com.biruk.habeshaJobs.DAO.SkillDAO;
 import com.biruk.habeshaJobs.DTO.OutgoingJobDTO;
 import com.biruk.habeshaJobs.DTO.OutgoingJobSeekerDTO;
 import com.biruk.habeshaJobs.Model.Common.GeoHelper;

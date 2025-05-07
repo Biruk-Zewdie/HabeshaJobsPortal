@@ -3,9 +3,11 @@ package com.biruk.habeshaJobs.DTO;
 import com.biruk.habeshaJobs.Model.Common.Address;
 import com.biruk.habeshaJobs.Model.Job.Job;
 import com.biruk.habeshaJobs.Model.Job.JobDescription;
+import com.biruk.habeshaJobs.Model.Job.JobRequiredSkill;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public class OutgoingJobDTO {
@@ -22,10 +24,15 @@ public class OutgoingJobDTO {
     private Address address;
     private Job.JobType jobType;
     private JobDescription jobDescription;
+
+//    private List<JobRequiredSkill> jobRequiredSkills; //this makes unnecessary very complicated nest in our response body
+    private List <String> skillsRequired;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDate applicationDeadline;
     private int numberOfOpenings;
+
     private OutgoingEmployerDTO employer;
 
 
@@ -33,8 +40,8 @@ public class OutgoingJobDTO {
 
     }
 
-    public OutgoingJobDTO(UUID jobId, String jobTitle, double salary, Address address, Job.JobType jobType,
-                          JobDescription jobDescription, LocalDateTime createdAt, LocalDateTime updatedAt,
+    public OutgoingJobDTO(UUID jobId, String jobTitle, double salary, Address address, Job.JobType jobType, JobDescription jobDescription,
+                          List<String> skillsRequired, LocalDateTime createdAt, LocalDateTime updatedAt,
                           LocalDate applicationDeadline, int numberOfOpenings, OutgoingEmployerDTO employer) {
 
         this.jobId = jobId;
@@ -43,6 +50,7 @@ public class OutgoingJobDTO {
         this.address = address;
         this.jobType = jobType;
         this.jobDescription = jobDescription;
+        this.skillsRequired = skillsRequired;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.applicationDeadline = applicationDeadline;
@@ -57,6 +65,8 @@ public class OutgoingJobDTO {
         this.address = job.getAddress();
         this.jobType = job.getJobType();
         this.jobDescription = job.getJobDescription();
+        this.skillsRequired = job.getJobRequiredSkills().stream()
+                .map(sr-> sr.getSkill().getSkillName()).toList();
         this.createdAt = job.getCreatedAt();
         this.updatedAt = job.getUpdatedAt();
         this.applicationDeadline = job.getApplicationDeadline();
@@ -113,6 +123,14 @@ public class OutgoingJobDTO {
         this.jobDescription = jobDescription;
     }
 
+    public List<String> getSkillsRequired() {
+        return skillsRequired;
+    }
+
+    public void setJobRequiredSkills(List<String> skillsRequired){
+        this.skillsRequired = skillsRequired;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -162,6 +180,7 @@ public class OutgoingJobDTO {
                 ", address=" + address +
                 ", jobType=" + jobType +
                 ", jobDescription=" + jobDescription +
+                ", skillsRequired=" + skillsRequired +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 ", applicationDeadline=" + applicationDeadline +

@@ -52,6 +52,9 @@ public class Job {
 
     private int numberOfOpenings;
 
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<JobRequiredSkill> jobRequiredSkills;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employer_id", nullable = false)
     @JsonBackReference // this is used to prevent infinite recursion when serializing the employer object
@@ -72,7 +75,7 @@ public class Job {
     public Job(UUID jobId, String jobTitle, double salary, Address address, Point location,
                JobType jobType, JobDescription jobDescription, LocalDateTime createdAt,
                LocalDateTime updatedAt, LocalDate applicationDeadline, int numberOfOpenings,
-               Employer employer, List<JobApplication> jobApplications) {
+               List<JobRequiredSkill> jobRequiredSkills, Employer employer, List<JobApplication> jobApplications) {
         this.jobId = jobId;
         this.jobTitle = jobTitle;
         this.salary = salary;
@@ -84,6 +87,7 @@ public class Job {
         this.updatedAt = updatedAt;
         this.applicationDeadline = applicationDeadline;
         this.numberOfOpenings = numberOfOpenings;
+        this.jobRequiredSkills = jobRequiredSkills;
         this.employer = employer;
         this.jobApplications = jobApplications;
     }
@@ -191,6 +195,14 @@ public class Job {
         this.employer = employer;
     }
 
+    public List<JobRequiredSkill> getJobRequiredSkills() {
+        return jobRequiredSkills;
+    }
+
+    public void setJobRequiredSkill(List<JobRequiredSkill> jobRequiredSkills) {
+        this.jobRequiredSkills = jobRequiredSkills;
+    }
+
     public List<JobApplication> getJobApplications() {
         return jobApplications;
     }
@@ -223,6 +235,7 @@ public class Job {
                 ", applicationDeadline=" + applicationDeadline +
                 ", numberOfOpenings=" + numberOfOpenings +
                 ", employer=" + employer +
+                ", jobRequiredSkills=" + jobRequiredSkills +
                 ", jobApplications=" + jobApplications +
                 '}';
     }

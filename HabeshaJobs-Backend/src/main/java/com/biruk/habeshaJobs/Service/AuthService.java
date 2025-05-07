@@ -1,14 +1,14 @@
 package com.biruk.habeshaJobs.Service;
 
-import com.biruk.habeshaJobs.DAO.EmployerDAO;
-import com.biruk.habeshaJobs.DAO.JobSeekerDAO;
-import com.biruk.habeshaJobs.DAO.UserDAO;
+import com.biruk.habeshaJobs.DAO.*;
 import com.biruk.habeshaJobs.DTO.*;
 import com.biruk.habeshaJobs.Exceptions.EmailAlreadyExistsException;
 import com.biruk.habeshaJobs.Interfaces.FileStorageService;
 import com.biruk.habeshaJobs.Model.Common.GeoHelper;
+import com.biruk.habeshaJobs.Model.Common.Skill;
 import com.biruk.habeshaJobs.Model.Employer;
 import com.biruk.habeshaJobs.Model.JobSeeker.JobSeeker;
+import com.biruk.habeshaJobs.Model.JobSeeker.JobSeekerSkill;
 import com.biruk.habeshaJobs.Model.User.User;
 import com.biruk.habeshaJobs.SecurityConfig.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +19,16 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class AuthService {
 
     private final UserDAO userDAO;
     private final JobSeekerDAO jobSeekerDAO;
     private final EmployerDAO employerDAO;
+    private final SkillDAO skillDAO;
     private final FileStorageService fileStorageService;
     private final PasswordEncoder passwordEncoder;
     private final JWTUtil jwtUtil;
@@ -32,13 +36,14 @@ public class AuthService {
     private final GeoHelper geoHelper;
 
     @Autowired
-    public AuthService (UserDAO userDAO, JobSeekerDAO jobSeekerDAO, EmployerDAO employerDAO,
+    public AuthService (UserDAO userDAO, JobSeekerDAO jobSeekerDAO, EmployerDAO employerDAO, SkillDAO skillDAO,
                         FileStorageService fileStorageService, PasswordEncoder passwordEncoder,
                         JWTUtil jwtUtil, AuthenticationManager authenticationManager, GeoHelper geoHelper) {
 
         this.userDAO = userDAO;
         this.jobSeekerDAO = jobSeekerDAO;
         this.employerDAO = employerDAO;
+        this.skillDAO = skillDAO;
         this.fileStorageService = fileStorageService;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
@@ -131,7 +136,7 @@ public class AuthService {
             jobSeeker.setEducation(JSeekerRegDTO.getEducation());
             jobSeeker.setProfilePictureUrl(profilePictureUrl);
             jobSeeker.setLinkedInUrl(JSeekerRegDTO.getLinkedInUrl());
-            jobSeeker.setSkills(JSeekerRegDTO.getSkills());
+//            jobSeeker.setJobSeekerSkill(JSeekerRegDTO.getJobSeekerSkills());
             jobSeeker.setResumeUrl(resumeFileUrl);
             jobSeeker.setWorkExperiences(JSeekerRegDTO.getWorkExperiences());
             jobSeeker.setReferences(JSeekerRegDTO.getReferences());
@@ -139,6 +144,36 @@ public class AuthService {
 
             // set the location using the GeoHelper
             jobSeeker.setLocation(geoHelper.createPointFromAddress(JSeekerRegDTO.getAddress()));
+
+            /*Steps
+            1. get an input from the user with a fields skillName and skill level using IncomingJobSeekerSkillDTO.
+            2. iterate through list of skills we get from the user and get the skill from the database if it is stored in a database, otherwise create a new skill
+            3. set the skill in jobSeekerSkill in order to set in jobSeeker, because the jobSeeker and skill are linked with JobSeekerSkill.
+            4. set a job in JobSeekerSkills back because they are interLinked (both side relation)
+            5. save the JobSeeker in Database
+            * */
+
+            List<JobSeekerSkill> jobSeekerSkills = new ArrayList<>();
+
+            for (IncomingJobSeekerSkillsDTO incomingJobSeekerSkillsDTO : JSeekerRegDTO.getJobSeekerSkills() ){
+
+                String skillName = incomingJobSeekerSkillsDTO.getSkillName();
+                Skill skill = skillDAO.findBySkillName(skillName).orElseGet(() ->
+                {
+                    Skill newSkill = new Skill();
+                    newSkill.setSkillName(skillName);
+                    return skillDAO.save(newSkill);
+                });
+
+                JobSeekerSkill jobSeekerSkill = new JobSeekerSkill();
+                jobSeekerSkill.setSkill(skill);
+                jobSeekerSkill.setJobSeeker(jobSeeker);
+                jobSeekerSkill.setSkillLevel(incomingJobSeekerSkillsDTO.getSkillLevel());
+
+                jobSeekerSkills.add(jobSeekerSkill);
+            }
+
+            jobSeeker.setJobSeekerSkill(jobSeekerSkills);
 
             //Save the JobSeeker in our database
             JobSeeker savedJobSeeker = jobSeekerDAO.save(jobSeeker);

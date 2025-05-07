@@ -1,10 +1,8 @@
 package com.biruk.habeshaJobs.DTO;
 
 import com.biruk.habeshaJobs.Model.Common.Address;
-import com.biruk.habeshaJobs.Model.JobSeeker.Education;
-import com.biruk.habeshaJobs.Model.JobSeeker.JobSeeker;
-import com.biruk.habeshaJobs.Model.JobSeeker.Reference;
-import com.biruk.habeshaJobs.Model.JobSeeker.WorkExperience;
+import com.biruk.habeshaJobs.Model.Common.Skill;
+import com.biruk.habeshaJobs.Model.JobSeeker.*;
 import com.biruk.habeshaJobs.Model.User.User;
 
 import java.time.LocalDateTime;
@@ -28,7 +26,7 @@ public class OutgoingJobSeekerDTO {
     private String resumeUrl;
     private List<Education> education;
     private List<WorkExperience> workExperiences;
-    private Map<String, JobSeeker.SkillLevel> skills;
+    private List<OutgoingJobSeekerSkillDTO> jobSeekerSkills;
     private List <Reference> references;
     private LocalDateTime dateOfJoining;
     private LocalDateTime profileLastUpdatedAt;
@@ -54,7 +52,11 @@ public class OutgoingJobSeekerDTO {
         this.resumeUrl = jobSeeker.getResumeUrl();
         this.education = jobSeeker.getEducation();
         this.workExperiences = jobSeeker.getWorkExperiences();
-        this.skills = jobSeeker.getSkills();
+        this.jobSeekerSkills = jobSeeker.getJobSeekerSkill().stream()
+                .map(jss -> new OutgoingJobSeekerSkillDTO(
+                        jss.getSkill().getSkillName(),
+                        jss.getSkillLevel()))
+                .toList();
         this.references = jobSeeker.getReferences();
         this.dateOfJoining = jobSeeker.getDateOfJoining();
         this.profileLastUpdatedAt = jobSeeker.getProfileLastUpdatedAt();
@@ -73,7 +75,11 @@ public class OutgoingJobSeekerDTO {
         this.resumeUrl = jobSeeker.getResumeUrl();
         this.education = jobSeeker.getEducation();
         this.workExperiences = jobSeeker.getWorkExperiences();
-        this.skills = jobSeeker.getSkills();
+        this.jobSeekerSkills = jobSeeker.getJobSeekerSkill().stream()
+                .map(jss -> new OutgoingJobSeekerSkillDTO(
+                       jss.getSkill().getSkillName(),
+                       jss.getSkillLevel()))
+                .toList();
         this.references = jobSeeker.getReferences();
         this.dateOfJoining = jobSeeker.getDateOfJoining();
         this.profileLastUpdatedAt = jobSeeker.getProfileLastUpdatedAt();
@@ -87,7 +93,7 @@ public class OutgoingJobSeekerDTO {
     * savedJobSeeker.getUser().getEmail() - this is nested, so we are assembling it piece by piece.
     * */
 
-    public OutgoingJobSeekerDTO(UUID jobSeekerId, String firstName, String lastName, String email, User.Role role, Address address, String profilePictureUrl, String linkedInUrl, String resumeUrl, List<Education> education, List<WorkExperience> workExperiences, Map<String, JobSeeker.SkillLevel> skills, List<Reference> references, LocalDateTime dateOfJoining, LocalDateTime profileLastUpdatedAt) {
+    public OutgoingJobSeekerDTO(UUID jobSeekerId, String firstName, String lastName, String email, User.Role role, Address address, String profilePictureUrl, String linkedInUrl, String resumeUrl, List<Education> education, List<WorkExperience> workExperiences, List<OutgoingJobSeekerSkillDTO> jobSeekerSkills, List<Reference> references, LocalDateTime dateOfJoining, LocalDateTime profileLastUpdatedAt) {
         this.jobSeekerId = jobSeekerId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -99,7 +105,7 @@ public class OutgoingJobSeekerDTO {
         this.resumeUrl = resumeUrl;
         this.education = education;
         this.workExperiences = workExperiences;
-        this.skills = skills;
+        this.jobSeekerSkills= jobSeekerSkills;
         this.references = references;
         this.dateOfJoining = dateOfJoining;
         this.profileLastUpdatedAt = profileLastUpdatedAt;
@@ -194,12 +200,12 @@ public class OutgoingJobSeekerDTO {
         this.workExperiences = workExperiences;
     }
 
-    public Map<String, JobSeeker.SkillLevel> getSkills() {
-        return skills;
+    public List<OutgoingJobSeekerSkillDTO> getJobSeekerSkills() {
+        return jobSeekerSkills;
     }
 
-    public void setSkills(Map<String, JobSeeker.SkillLevel> skills) {
-        this.skills = skills;
+    public void setJobSeekerSkills(List<OutgoingJobSeekerSkillDTO> jobSeekerSkills) {
+        this.jobSeekerSkills = jobSeekerSkills;
     }
 
     public List<Reference> getReferences() {
@@ -249,7 +255,7 @@ public class OutgoingJobSeekerDTO {
                 ", resumeUrl='" + resumeUrl + '\'' +
                 ", education=" + education +
                 ", workExperiences=" + workExperiences +
-                ", skills=" + skills +
+                ", jobSeekerSkills=" + jobSeekerSkills +
                 ", references=" + references +
                 ", dateOfJoining=" + dateOfJoining +
                 ", profileLastUpdatedAt=" + profileLastUpdatedAt +

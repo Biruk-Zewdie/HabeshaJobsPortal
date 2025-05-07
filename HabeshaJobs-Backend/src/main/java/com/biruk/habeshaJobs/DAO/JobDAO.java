@@ -53,5 +53,16 @@ public interface JobDAO extends JpaRepository<Job, UUID> {
                                  @Param("lon") double lon,
                                  @Param("radius") double radius);
 
+    //filter jobs that have at least 3 skills in common with the job seeker.
+    @Query(value =  """
+            SELECT j.*
+            FROM jspschema.job j
+            JOIN jspschema.job_required_skill jrs ON j.job_id = jrs.job_id
+            JOIN jspschema.job_seeker_skill jss ON jrs.skill_id = jss.skill_id
+            WHERE jss.job_seeker_id = :jobSeekerId
+            GROUP BY j.job_id
+            HAVING COUNT(DISTINCT jrs.skill_id) >= 3
+            """, nativeQuery = true)
+    List<Job> findMatchingJobsWithJobSeekerSkills( @Param("jobSeekerId") UUID jobSeekerId);
 
 }

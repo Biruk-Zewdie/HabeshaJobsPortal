@@ -3,11 +3,15 @@ package com.biruk.habeshaJobs.Service;
 
 import com.biruk.habeshaJobs.DAO.EmployerDAO;
 import com.biruk.habeshaJobs.DAO.JobDAO;
+import com.biruk.habeshaJobs.DAO.SkillDAO;
 import com.biruk.habeshaJobs.DTO.IncomingJobDTO;
+import com.biruk.habeshaJobs.DTO.IncomingJobRequiredSkillDTO;
 import com.biruk.habeshaJobs.DTO.OutgoingJobDTO;
 import com.biruk.habeshaJobs.Model.Common.GeoHelper;
+import com.biruk.habeshaJobs.Model.Common.Skill;
 import com.biruk.habeshaJobs.Model.Employer;
 import com.biruk.habeshaJobs.Model.Job.Job;
+import com.biruk.habeshaJobs.Model.Job.JobRequiredSkill;
 import com.biruk.habeshaJobs.Model.JobApplication;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,10 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class JobService {
@@ -27,15 +28,17 @@ public class JobService {
     private final JobDAO jobDAO;
     private final JobSeekerService jobSeekerService;
     private final EmployerDAO employerDAO;
+    private final SkillDAO skillDAO;
     private final ObjectMapper objectMapper;
     private final GeoHelper geoHelper;
 
 
     @Autowired
-    public JobService (JobDAO jobDAO, JobSeekerService jobSeekerService, EmployerDAO employerDAO, ObjectMapper objectMapper, GeoHelper geoHelper) {
+    public JobService (JobDAO jobDAO, JobSeekerService jobSeekerService, EmployerDAO employerDAO, SkillDAO skillDAO, ObjectMapper objectMapper, GeoHelper geoHelper) {
         this.jobDAO = jobDAO;
         this.jobSeekerService = jobSeekerService;
         this.employerDAO = employerDAO;
+        this.skillDAO = skillDAO;
         this.objectMapper = objectMapper;
         this.geoHelper = geoHelper;
     }
@@ -49,18 +52,43 @@ public class JobService {
         Employer employer = employerDAO.findEmployerByUserUserId(userId).orElseThrow( () ->
                 new NoSuchElementException("User with ID " + userId + " not found"));
 
+
         Job job = new Job();
         job.setJobTitle(incomingJobDTO.getJobTitle());
         job.setSalary(incomingJobDTO.getSalary());
         job.setAddress(incomingJobDTO.getAddress());
         job.setJobType(incomingJobDTO.getJobType());
         job.setJobDescription(incomingJobDTO.getJobDescription());
+//        job.setJobRequiredSkill(incomingJobDTO.getIncomingJobRequiredSkillDTOs());
         job.setApplicationDeadline(incomingJobDTO.getApplicationDeadline());
         job.setNumberOfOpenings(incomingJobDTO.getNumberOfOpenings());
         job.setEmployer(employer);
 
         // Set the location using the GeoHelper
         job.setLocation(geoHelper.createPointFromAddress(incomingJobDTO.getAddress()));
+
+        List<JobRequiredSkill> jobRequiredSkills = new ArrayList<>();
+
+        for (IncomingJobRequiredSkillDTO incomingJobRequiredSkillDTO: incomingJobDTO.getJobRequiredSkills()) {
+            String skillName = incomingJobRequiredSkillDTO.getSkillName();
+
+            //fetch or create skill
+
+            Skill skill = skillDAO.findBySkillName(skillName).orElseGet(() -> {
+                Skill newSkill = new Skill();
+                newSkill.setSkillName(skillName);
+                return skillDAO.save(newSkill);
+            });
+
+            // Create a job required skill
+            JobRequiredSkill jobRequiredSkill = new JobRequiredSkill();
+            jobRequiredSkill.setSkill(skill);
+            jobRequiredSkill.setJob(job);       //set back reference for Job
+
+            jobRequiredSkills.add(jobRequiredSkill);
+        }
+
+        job.setJobRequiredSkill(jobRequiredSkills);
 
         Job savedJob = jobDAO.save(job);
 
@@ -141,6 +169,32 @@ public class JobService {
                 existingJob.setLocation(geoHelper.createPointFromAddress(existingJob.getAddress()));
             }
 
+            //update skills if provided
+            if (patchNode.has("skillsRequired") && patchNode.get("skillsRequired").isArray()){
+                List<JobRequiredSkill> updatedSkills = new ArrayList<>();
+
+                existingJob.getJobRequiredSkills().clear();
+
+                for (JsonNode skillNode : patchNode.get("skillsRequired")){
+                    String skillName = skillNode.asText().trim();
+
+                    Skill skill = skillDAO.findBySkillNameIgnoreCase(skillName).orElseGet(() -> {
+                        Skill newSkill = new Skill();
+                        newSkill.setSkillName(skillName);
+                        return skillDAO.save(newSkill);
+                    });
+
+                    JobRequiredSkill jrs = new JobRequiredSkill();
+                    jrs.setSkill(skill);
+                    jrs.setJob(existingJob);  //link back to the job
+                    updatedSkills.add(jrs);
+                }
+
+                existingJob.getJobRequiredSkills().addAll(updatedSkills);
+            }
+
+
+
             // Restore important relationships if needed
             existingJob.setEmployer(employer);
             existingJob.setJobApplications(applications);
@@ -204,6 +258,17 @@ public class JobService {
         //return findNearByJobs(jSeekerLat, jSeekerLon, radiusInKM);
 
 
+    }
+
+    public List<OutgoingJobDTO> findJobsMatchingJobSeekerSkills (UUID jobSeekerId){
+
+        List<Job> jobs = jobDAO.findMatchingJobsWithJobSeekerSkills(jobSeekerId);
+
+        if (jobs.isEmpty()){
+            throw new NoSuchElementException("No jobs found matching job seeker skills");
+        }
+
+        return jobs.stream().map(job -> new OutgoingJobDTO(job)).toList();
     }
 
     /*

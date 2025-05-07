@@ -1,10 +1,7 @@
 package com.biruk.habeshaJobs.DTO;
 
 import com.biruk.habeshaJobs.Model.Common.Address;
-import com.biruk.habeshaJobs.Model.JobSeeker.Education;
-import com.biruk.habeshaJobs.Model.JobSeeker.JobSeeker;
-import com.biruk.habeshaJobs.Model.JobSeeker.Reference;
-import com.biruk.habeshaJobs.Model.JobSeeker.WorkExperience;
+import com.biruk.habeshaJobs.Model.JobSeeker.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -40,7 +37,7 @@ public class IncomingJobSeekerRegDTO {
     private List<Education> education = new ArrayList<>();
     private MultipartFile profilePicture;  //could be .png, .jpg, .jpeg
     private String linkedInUrl;
-    private Map<String, JobSeeker.SkillLevel> skills = new HashMap<>();
+    private List<IncomingJobSeekerSkillsDTO> jobSeekerSkills = new ArrayList<>();
     private MultipartFile resumeFile;           //could be .pdf, .docx, .txt
     private List<WorkExperience> workExperiences = new ArrayList<>();
     private List<Reference> references = new ArrayList<>();
@@ -51,7 +48,7 @@ public class IncomingJobSeekerRegDTO {
 
     public IncomingJobSeekerRegDTO(String firstName, String lastName, String phoneNumber, LocalDate dateOfBirth, Address address,
                                    List<Education> education, MultipartFile profilePicture, String linkedInUrl,
-                                   Map<String, JobSeeker.SkillLevel> skills, MultipartFile resumeFile,
+                                   List<IncomingJobSeekerSkillsDTO> jobSeekerSkills, MultipartFile resumeFile,
                                    List<WorkExperience> workExperiences, List<Reference> references, IncomingUserRegDTO user) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -61,7 +58,7 @@ public class IncomingJobSeekerRegDTO {
         this.education = education;
         this.profilePicture = profilePicture;
         this.linkedInUrl = linkedInUrl;
-        this.skills = skills;
+        this.jobSeekerSkills = jobSeekerSkills;
         this.resumeFile = resumeFile;
         this.workExperiences = workExperiences;
         this.references = references;
@@ -132,12 +129,12 @@ public class IncomingJobSeekerRegDTO {
         this.linkedInUrl = linkedInUrl;
     }
 
-    public Map<String, JobSeeker.SkillLevel> getSkills() {
-        return skills;
+    public List<IncomingJobSeekerSkillsDTO> getJobSeekerSkills() {
+        return jobSeekerSkills;
     }
 
-    public void setSkills(Map<String, JobSeeker.SkillLevel> skills) {
-        this.skills = skills;
+    public void setJobSeekerSkills(List<IncomingJobSeekerSkillsDTO> jobSeekerSkills) {
+        this.jobSeekerSkills = jobSeekerSkills;
     }
 
     public MultipartFile getResumeFile() {
@@ -183,7 +180,7 @@ public class IncomingJobSeekerRegDTO {
                 ", education=" + education +
                 ", profilePicture=" + profilePicture +
                 ", linkedInUrl='" + linkedInUrl + '\'' +
-                ", skills=" + skills +
+                ", jobSeekerSkills=" + jobSeekerSkills +
                 ", resumeFile=" + resumeFile +
                 ", workExperiences=" + workExperiences +
                 ", references=" + references +

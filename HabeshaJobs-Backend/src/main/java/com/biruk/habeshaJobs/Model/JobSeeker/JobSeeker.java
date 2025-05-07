@@ -1,6 +1,7 @@
 package com.biruk.habeshaJobs.Model.JobSeeker;
 
 import com.biruk.habeshaJobs.Model.Common.Address;
+import com.biruk.habeshaJobs.Model.Common.Skill;
 import com.biruk.habeshaJobs.Model.JobApplication;
 import com.biruk.habeshaJobs.Model.User.User;
 import com.fasterxml.jackson.annotation.JsonMerge;
@@ -19,6 +20,7 @@ public class JobSeeker {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "jobSeekerId")
     private UUID jobSeekerId;
 
     @Column(nullable = false)
@@ -54,13 +56,28 @@ public class JobSeeker {
 
     private String linkedInUrl;
 
+    /*
+    Deprecated because I have to normalize the JobSeekerSkill table in order to write queries to match the jobSeeker skills with the job required skills.
+    Otherwise I should convert the skills Map key into a list of strings and fetch all the list of skills required in to the memory and compare them with the jobSeeker skills.
+    This is not efficient for large data sets.
+    */
+
     //JobSeeker skills mapped with skill levels
-    @ElementCollection
-    @CollectionTable(name = "jobSeeker_skills", joinColumns = @JoinColumn(name = "jobSeekerId"))
-    @MapKeyColumn(name = "skill_name")
-    @Column(name = "skill_level")
-    @JsonMerge
-    private Map<String, SkillLevel> skills = new HashMap<>();
+//    @ElementCollection
+//    @CollectionTable(name = "jobSeeker_skills", joinColumns = @JoinColumn(name = "jobSeekerId"))
+//    @MapKeyColumn(name = "skill_name")
+//    @Column(name = "skill_level")
+//    @JsonMerge
+//    private Map<String, SkillLevel> skills = new HashMap<>();
+
+    /*
+    * Now in order to efficiently handle the matching of jobSeeker skills with the job required skills, we have to create a new table called JobSeekerSkill and set a many to one relationship with the JobSeeker and Skill tables.
+    * This will allow us to match the jobSeeker skills with the job required skills using a join query which is more efficient than fetching all the skills in to the memory and comparing them.
+    * */
+    @OneToMany(mappedBy = "jobSeeker", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<JobSeekerSkill> jobSeekerSkill = new ArrayList<>();
+
+
 
     //these are used to track the jobSeeker date of sign up
     private LocalDateTime dateOfJoining = LocalDateTime.now();
@@ -100,7 +117,7 @@ public class JobSeeker {
 
     public JobSeeker(UUID jobSeekerId, String firstName, String lastName, String phoneNumber, LocalDate dateOfBirth,
                      Address address, Point location, List<Education> education, String profilePictureUrl, IsActiveJobSeeker isActiveJobSeeker,
-                     String linkedInUrl, Map<String, SkillLevel> skills, LocalDateTime dateOfJoining, LocalDateTime profileLastUpdatedAt, String resumeUrl,
+                     String linkedInUrl, List<JobSeekerSkill> jobSeekerSkill, LocalDateTime dateOfJoining, LocalDateTime profileLastUpdatedAt, String resumeUrl,
                      List<WorkExperience> workExperiences, List<Reference> references, List <JobApplication> jobApplication, User user) {
         this.jobSeekerId = jobSeekerId;
         this.firstName = firstName;
@@ -113,7 +130,7 @@ public class JobSeeker {
         this.profilePictureUrl = profilePictureUrl;
         this.isActiveJobSeeker = isActiveJobSeeker;
         this.linkedInUrl = linkedInUrl;
-        this.skills = skills;
+        this.jobSeekerSkill = jobSeekerSkill;
         this.dateOfJoining = dateOfJoining;
         this.profileLastUpdatedAt = profileLastUpdatedAt;
         this.resumeUrl = resumeUrl;
@@ -211,12 +228,12 @@ public class JobSeeker {
         this.linkedInUrl = linkedInUrl;
     }
 
-    public Map<String, SkillLevel> getSkills() {
-        return skills;
+    public List<JobSeekerSkill> getJobSeekerSkill() {
+        return jobSeekerSkill;
     }
 
-    public void setSkills(Map<String, SkillLevel> skills) {
-        this.skills = skills;
+    public void setJobSeekerSkill(List<JobSeekerSkill> jobSeekerSkill) {
+        this.jobSeekerSkill = jobSeekerSkill;
     }
 
     public LocalDateTime getDateOfJoining() {
@@ -281,12 +298,6 @@ public class JobSeeker {
         No,
     }
 
-    //JobSeeker skills enum
-    public enum SkillLevel{
-        Beginner,
-        Intermediate,
-        Expert
-    }
 
     @Override
     public String toString() {
@@ -301,7 +312,7 @@ public class JobSeeker {
                 ", profilePictureUrl='" + profilePictureUrl + '\'' +
                 ", isActiveJobSeeker=" + isActiveJobSeeker +
                 ", linkedInUrl='" + linkedInUrl + '\'' +
-                ", skills=" + skills +
+                ", jobSeekerSkill=" + jobSeekerSkill +
                 ", dateOfJoining=" + dateOfJoining +
                 ", resumeUrl='" + resumeUrl + '\'' +
                 ", workExperiences=" + workExperiences +
