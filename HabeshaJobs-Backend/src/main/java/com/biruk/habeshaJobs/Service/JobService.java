@@ -27,6 +27,7 @@ public class JobService {
 
     private final JobDAO jobDAO;
     private final JobSeekerService jobSeekerService;
+    private final JobSkillService jobSkillService;
     private final EmployerDAO employerDAO;
     private final SkillDAO skillDAO;
     private final ObjectMapper objectMapper;
@@ -34,9 +35,10 @@ public class JobService {
 
 
     @Autowired
-    public JobService (JobDAO jobDAO, JobSeekerService jobSeekerService, EmployerDAO employerDAO, SkillDAO skillDAO, ObjectMapper objectMapper, GeoHelper geoHelper) {
+    public JobService (JobDAO jobDAO, JobSeekerService jobSeekerService, JobSkillService jobSkillService, EmployerDAO employerDAO, SkillDAO skillDAO, ObjectMapper objectMapper, GeoHelper geoHelper) {
         this.jobDAO = jobDAO;
         this.jobSeekerService = jobSeekerService;
+        this.jobSkillService = jobSkillService;
         this.employerDAO = employerDAO;
         this.skillDAO = skillDAO;
         this.objectMapper = objectMapper;
@@ -177,23 +179,19 @@ public class JobService {
 
                 for (JsonNode skillNode : patchNode.get("skillsRequired")){
                     String skillName = skillNode.asText().trim();
-
-                    Skill skill = skillDAO.findBySkillNameIgnoreCase(skillName).orElseGet(() -> {
-                        Skill newSkill = new Skill();
-                        newSkill.setSkillName(skillName);
-                        return skillDAO.save(newSkill);
-                    });
-
+                    IncomingJobRequiredSkillDTO dto = new IncomingJobRequiredSkillDTO(skillName);
+//                    Skill skill = skillDAO.findBySkillNameIgnoreCase(skillName).orElseGet(() -> {
+//                        Skill newSkill = new Skill();
+//                        newSkill.setSkillName(skillName);
+//                        return skillDAO.save(newSkill);
+//                    });
+                    jobSkillService.createJobRequiredSkill(dto,existingJob);
                     JobRequiredSkill jrs = new JobRequiredSkill();
-                    jrs.setSkill(skill);
-                    jrs.setJob(existingJob);  //link back to the job
                     updatedSkills.add(jrs);
                 }
 
                 existingJob.getJobRequiredSkills().addAll(updatedSkills);
             }
-
-
 
             // Restore important relationships if needed
             existingJob.setEmployer(employer);

@@ -2,6 +2,7 @@ package com.biruk.habeshaJobs.Service;
 
 import com.biruk.habeshaJobs.DAO.SkillDAO;
 import com.biruk.habeshaJobs.Model.Common.Skill;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +16,7 @@ public class SkillService {
 
     private final SkillDAO skillDAO;
 
+    @Autowired
     public SkillService (SkillDAO skillDAO) {
         this.skillDAO = skillDAO;
     }
@@ -36,7 +38,7 @@ public class SkillService {
         return skillDAO.findBySkillNameIgnoreCase(skillName).orElseGet( () -> {
                     Skill newSkill = new Skill();
                     newSkill.setSkillName(skillName);
-                    return newSkill;
+                    return skillDAO.save(newSkill);
                 });
     }
 
