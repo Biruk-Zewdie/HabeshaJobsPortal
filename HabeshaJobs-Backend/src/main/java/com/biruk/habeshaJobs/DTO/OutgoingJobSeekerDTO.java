@@ -54,6 +54,7 @@ public class OutgoingJobSeekerDTO {
         this.workExperiences = jobSeeker.getWorkExperiences();
         this.jobSeekerSkills = jobSeeker.getJobSeekerSkill().stream()
                 .map(jss -> new OutgoingJobSeekerSkillDTO(
+                        jss.getJobSeekerSkillId(),
                         jss.getSkill().getSkillName(),
                         jss.getSkillLevel()))
                 .toList();
@@ -77,6 +78,7 @@ public class OutgoingJobSeekerDTO {
         this.workExperiences = jobSeeker.getWorkExperiences();
         this.jobSeekerSkills = jobSeeker.getJobSeekerSkill().stream()
                 .map(jss -> new OutgoingJobSeekerSkillDTO(
+                        jss.getJobSeekerSkillId(),
                        jss.getSkill().getSkillName(),
                        jss.getSkillLevel()))
                 .toList();

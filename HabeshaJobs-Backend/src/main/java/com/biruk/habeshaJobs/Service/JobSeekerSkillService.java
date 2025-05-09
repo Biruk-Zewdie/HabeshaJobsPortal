@@ -2,12 +2,14 @@ package com.biruk.habeshaJobs.Service;
 
 import com.biruk.habeshaJobs.DAO.JobSeekerSkillDAO;
 import com.biruk.habeshaJobs.DTO.IncomingJobSeekerSkillsDTO;
+import com.biruk.habeshaJobs.DTO.OutgoingJobSeekerSkillDTO;
 import com.biruk.habeshaJobs.Model.Common.Skill;
 import com.biruk.habeshaJobs.Model.JobSeeker.JobSeeker;
 import com.biruk.habeshaJobs.Model.JobSeeker.JobSeekerSkill;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -24,15 +26,18 @@ public class JobSeekerSkillService {
         this.skillService = skillService;
     }
 
-    public JobSeekerSkill createJobSeekerSkill (IncomingJobSeekerSkillsDTO incomingJssDTO, JobSeeker jobSeeker) {
+    public OutgoingJobSeekerSkillDTO createJobSeekerSkill (IncomingJobSeekerSkillsDTO incomingJssDTO, JobSeeker jobSeeker) {
 
         Skill skill = skillService.getOrCreateSkill(incomingJssDTO.getSkillName());
+
         JobSeekerSkill jobSeekerSkill = new JobSeekerSkill();
-        jobSeekerSkill.setSkillLevel(incomingJssDTO.getSkillLevel());
+        jobSeekerSkill.setSkillLevel(incomingJssDTO.getSkillLevel());;
         jobSeekerSkill.setSkill(skill);
         jobSeekerSkill.setJobSeeker(jobSeeker);
 
-        return jobSeekerSkillDAO.save(jobSeekerSkill);
+        jobSeekerSkillDAO.save(jobSeekerSkill);
+
+        return new OutgoingJobSeekerSkillDTO(jobSeekerSkill);
 
     }
 
@@ -51,27 +56,36 @@ public class JobSeekerSkillService {
         jobSeekerSkillDAO.deleteById(jssId);
     }
 
-    public JobSeekerSkill updateJobSeekerSkill (UUID jssId, JobSeekerSkill newJss) {
+    public OutgoingJobSeekerSkillDTO updateJobSeekerSkill (UUID jssId, IncomingJobSeekerSkillsDTO incomingJssDTO) {
 
     JobSeekerSkill existingJsSkill = getJobSeekerSkill(jssId);
 
-    if (!existingJsSkill.getSkill().equals(newJss.getSkill())){
-        existingJsSkill.setSkill(newJss.getSkill());
+    if (!existingJsSkill.getSkill().getSkillName().equals(incomingJssDTO.getSkillName())){
+        existingJsSkill.getSkill().setSkillName(incomingJssDTO.getSkillName());
     }
-    if (existingJsSkill.getSkillLevel().equals(newJss.getSkillLevel())){
-        existingJsSkill.setSkillLevel(newJss.getSkillLevel());
+    if (existingJsSkill.getSkillLevel().equals(incomingJssDTO.getSkillLevel())){
+        existingJsSkill.setSkillLevel(incomingJssDTO.getSkillLevel());
     }
 
     //we can't update the jobSeeker because we are creating
     //existing.setJobSeeker(newJss.getJobSeeker());
 
-    return  jobSeekerSkillDAO.save(existingJsSkill);
+
+    return  new OutgoingJobSeekerSkillDTO(jobSeekerSkillDAO.save(existingJsSkill));
 
     }
 
-    public List<JobSeekerSkill> getAllJobSeekerSkillsByJobSeekerId (UUID jobSeekerId){
+    public List<OutgoingJobSeekerSkillDTO> getAllJobSeekerSkillsByJobSeekerId (UUID jobSeekerId){
 
-        return jobSeekerSkillDAO.findByJobSeeker_JobSeekerId(jobSeekerId);
+        List<JobSeekerSkill> jobSeekerSkills = jobSeekerSkillDAO.findByJobSeeker_JobSeekerId(jobSeekerId);
+
+        List<OutgoingJobSeekerSkillDTO> outgoingJobSeekerSkillDTOs = new ArrayList<>();
+        for (JobSeekerSkill jobSeekerSkill : jobSeekerSkills){
+           OutgoingJobSeekerSkillDTO outgoingJobSeekerSkillDTO = new OutgoingJobSeekerSkillDTO(jobSeekerSkill);
+            outgoingJobSeekerSkillDTOs.add(outgoingJobSeekerSkillDTO);
+        }
+
+        return outgoingJobSeekerSkillDTOs;
     }
 
 }

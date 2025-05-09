@@ -29,18 +29,18 @@ public class JobService {
     private final JobSeekerService jobSeekerService;
     private final JobSkillService jobSkillService;
     private final EmployerDAO employerDAO;
-    private final SkillDAO skillDAO;
+    private final SkillService skillService;
     private final ObjectMapper objectMapper;
     private final GeoHelper geoHelper;
 
 
     @Autowired
-    public JobService (JobDAO jobDAO, JobSeekerService jobSeekerService, JobSkillService jobSkillService, EmployerDAO employerDAO, SkillDAO skillDAO, ObjectMapper objectMapper, GeoHelper geoHelper) {
+    public JobService (JobDAO jobDAO, JobSeekerService jobSeekerService, JobSkillService jobSkillService, EmployerDAO employerDAO, SkillService skillService, ObjectMapper objectMapper, GeoHelper geoHelper) {
         this.jobDAO = jobDAO;
         this.jobSeekerService = jobSeekerService;
         this.jobSkillService = jobSkillService;
         this.employerDAO = employerDAO;
-        this.skillDAO = skillDAO;
+        this.skillService = skillService;
         this.objectMapper = objectMapper;
         this.geoHelper = geoHelper;
     }
@@ -75,12 +75,7 @@ public class JobService {
             String skillName = incomingJobRequiredSkillDTO.getSkillName();
 
             //fetch or create skill
-
-            Skill skill = skillDAO.findBySkillName(skillName).orElseGet(() -> {
-                Skill newSkill = new Skill();
-                newSkill.setSkillName(skillName);
-                return skillDAO.save(newSkill);
-            });
+            Skill skill = skillService.getOrCreateSkill(skillName);
 
             // Create a job required skill
             JobRequiredSkill jobRequiredSkill = new JobRequiredSkill();
