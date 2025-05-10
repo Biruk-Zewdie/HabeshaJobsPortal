@@ -41,6 +41,8 @@
    - spring.servlet.multipart.max-file-size=10MB
    - spring.servlet.multipart.max-request-size=10MB
 8. It is a best practice to add JWT auth after the login endpoint built in order to keep in consideration JWT authorization for other endpoints. 
+9. admin role creation using CommandLineRunner.
+10. store admin credential in environment variables using intelliJ idea.(steps: run -> edit configurations -> environment variables -> add the variables) 
 
 
 ## End points 

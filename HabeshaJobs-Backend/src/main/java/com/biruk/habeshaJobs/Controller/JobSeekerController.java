@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,11 +19,13 @@ public class JobSeekerController {
 
     private final JobSeekerService jobSeekerService;
 
+
     @Autowired
     public JobSeekerController (JobSeekerService jobSeekerService){
         this.jobSeekerService = jobSeekerService;
     }
 
+    @PreAuthorize("hasRole('Admin')")
     @GetMapping
     public ResponseEntity<List<OutgoingJobSeekerDTO>> getAllJobSeekers () {
 

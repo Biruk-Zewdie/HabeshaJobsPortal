@@ -37,7 +37,7 @@ public class JwtFilter extends OncePerRequestFilter {
     //It checks if the request has a valid JWT in the Authorization header.
     //It uses a lots of helper methods that are defined below.
 
-    //FilterChain is chain of filters tha a request goes through before it reaching the final destination (the controller or endpoint).
+    //FilterChain is chain of filters that a request goes through before it reaching the final destination (the controller or endpoint).
 
 
     @Override
@@ -112,7 +112,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         User user = (User) getUserDetails(token);
 
-        List<GrantedAuthority> authorityList = List.of(new SimpleGrantedAuthority(user.getRole().toString()));
+        List<GrantedAuthority> authorityList = List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
 
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 user,
