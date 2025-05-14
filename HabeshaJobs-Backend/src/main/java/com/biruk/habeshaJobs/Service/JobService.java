@@ -51,7 +51,7 @@ public class JobService {
     // We will extract the User ID form the JWT token and find the employer using the user Id and set the employer into the job object that is gonna be posted.
     public OutgoingJobDTO postJob (IncomingJobDTO incomingJobDTO, UUID userId){
 
-        Employer employer = employerDAO.findEmployerByUserUserId(userId).orElseThrow( () ->
+        Employer employer = employerDAO.findByUser_UserId(userId).orElseThrow( () ->
                 new NoSuchElementException("User with ID " + userId + " not found"));
 
 

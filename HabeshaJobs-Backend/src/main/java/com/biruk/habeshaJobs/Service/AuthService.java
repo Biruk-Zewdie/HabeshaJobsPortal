@@ -3,15 +3,22 @@ package com.biruk.habeshaJobs.Service;
 import com.biruk.habeshaJobs.DAO.*;
 import com.biruk.habeshaJobs.DTO.*;
 import com.biruk.habeshaJobs.Exceptions.EmailAlreadyExistsException;
+import com.biruk.habeshaJobs.Exceptions.InvalidTokenException;
 import com.biruk.habeshaJobs.Interfaces.FileStorageService;
+import com.biruk.habeshaJobs.Mailing.AccountVerificationEmailContext;
+import com.biruk.habeshaJobs.Mailing.EmailService;
+import com.biruk.habeshaJobs.Mailing.SuccessfulEmailVerificationContext;
 import com.biruk.habeshaJobs.Model.Common.GeoHelper;
 import com.biruk.habeshaJobs.Model.Common.Skill;
 import com.biruk.habeshaJobs.Model.Employer;
 import com.biruk.habeshaJobs.Model.JobSeeker.JobSeeker;
 import com.biruk.habeshaJobs.Model.JobSeeker.JobSeekerSkill;
+import com.biruk.habeshaJobs.Model.VerificationToken;
 import com.biruk.habeshaJobs.Model.User.User;
 import com.biruk.habeshaJobs.SecurityConfig.JWTUtil;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class AuthService {
@@ -34,11 +42,18 @@ public class AuthService {
     private final JWTUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
     private final GeoHelper geoHelper;
+    private final VerificationTokenDAO verificationTokenDAO;
+    private final VerificationTokenService tokenService;
+    private final EmailService emailService;
+
+    @Value("${site.base.url.http}")
+    private String baseUrl;
 
     @Autowired
     public AuthService (UserDAO userDAO, JobSeekerDAO jobSeekerDAO, EmployerDAO employerDAO, SkillDAO skillDAO,
-                        FileStorageService fileStorageService, PasswordEncoder passwordEncoder,
-                        JWTUtil jwtUtil, AuthenticationManager authenticationManager, GeoHelper geoHelper) {
+                        FileStorageService fileStorageService, PasswordEncoder passwordEncoder, JWTUtil jwtUtil,
+                        AuthenticationManager authenticationManager, GeoHelper geoHelper, VerificationTokenDAO verificationTokenDAO,
+                        VerificationTokenService tokenService, EmailService emailService) {
 
         this.userDAO = userDAO;
         this.jobSeekerDAO = jobSeekerDAO;
@@ -49,6 +64,9 @@ public class AuthService {
         this.jwtUtil = jwtUtil;
         this.authenticationManager = authenticationManager;
         this.geoHelper = geoHelper;
+        this.verificationTokenDAO = verificationTokenDAO;
+        this.tokenService = tokenService;
+        this.emailService = emailService;
     }
 
     /*
@@ -101,8 +119,56 @@ public class AuthService {
         }
     }
 
+    public void sendRegistrationConfirmationEmail (User user) {
+
+        VerificationToken verificationToken = tokenService.createVerificationToken(user);
+        verificationToken.setUser(user);
+        verificationTokenDAO.save(verificationToken);
+
+        AccountVerificationEmailContext emailContext = new AccountVerificationEmailContext(jobSeekerDAO, employerDAO);
+        emailContext.init(user);
+        emailContext.setToken(verificationToken.getToken());
+        emailContext.buildVerificationUrl(baseUrl, verificationToken.getToken());
+        try{
+            emailService.sendMail(emailContext);
+        }catch (Exception e){
+            e.getMessage();
+        }
+    }
+
+    @Transactional
+    public boolean verifyUserEmail (String token) throws InvalidTokenException {
+        VerificationToken verificationToken = verificationTokenDAO.findByToken(token);
+        if(verificationToken == null ||  verificationToken.isExpired()){
+            throw new InvalidTokenException ("Token is not valid");
+        }
+        User user = userDAO.findById(verificationToken.getUser().getUserId()).orElse(null);
+
+        if (user == null){
+            return false;
+        }
+
+        user.setIsAccountVerified(true);
+        userDAO.save(user);
+
+        verificationTokenDAO.removeByToken(token);
+
+        //send successful verification email
+        SuccessfulEmailVerificationContext emailContext = new SuccessfulEmailVerificationContext(jobSeekerDAO, employerDAO);
+        emailContext.init(user);
+
+        emailContext.buildLoginUrl(baseUrl);
+        try{
+            emailService.sendMail(emailContext);
+        }catch (Exception e){
+            System.out.println("Email verification succeeded, but sending confirmation email failed: {}" + e.getMessage());
+        }
+
+        return true;
+    }
 
 
+    @Transactional
     public OutgoingJobSeekerDTO registerJobSeeker (IncomingJobSeekerRegDTO JSeekerRegDTO) {
         IncomingUserRegDTO userDTO = JSeekerRegDTO.getUser();
 
@@ -141,7 +207,6 @@ public class AuthService {
             jobSeeker.setWorkExperiences(JSeekerRegDTO.getWorkExperiences());
             jobSeeker.setReferences(JSeekerRegDTO.getReferences());
             jobSeeker.setUser(user);
-
             // set the location using the GeoHelper
             jobSeeker.setLocation(geoHelper.createPointFromAddress(JSeekerRegDTO.getAddress()));
 
@@ -178,6 +243,8 @@ public class AuthService {
             //Save the JobSeeker in our database
             JobSeeker savedJobSeeker = jobSeekerDAO.save(jobSeeker);
 
+            sendRegistrationConfirmationEmail(jobSeeker.getUser());
+
             // Now we need to return the jobSeekerDTO to the client
             return new OutgoingJobSeekerDTO(savedJobSeeker);
 
@@ -185,7 +252,8 @@ public class AuthService {
             throw new RuntimeException("failed to register JobSeeker: " + e.getMessage(), e);
         }
     }
-    
+
+    @Transactional
     public OutgoingEmployerDTO registerEmployer (IncomingEmployerRegDTO employerRegDTO){
 
         IncomingUserRegDTO userDTO = employerRegDTO.getUser();
@@ -220,8 +288,11 @@ public class AuthService {
             employer.setCompanySize(employerRegDTO.getCompanySize());
             employer.setUser(user);
 
+
             //save the employer in our database
             Employer savedEmployer = employerDAO.save(employer);
+
+//            sendRegistrationConfirmationEmail(user);
 
             //Now we need to return the OutgoingEmployerDTO to the client.
             return new OutgoingEmployerDTO(savedEmployer);

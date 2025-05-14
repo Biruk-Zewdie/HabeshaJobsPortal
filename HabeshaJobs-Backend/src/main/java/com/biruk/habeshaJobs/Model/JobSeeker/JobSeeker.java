@@ -4,6 +4,8 @@ import com.biruk.habeshaJobs.Model.Common.Address;
 import com.biruk.habeshaJobs.Model.Common.Skill;
 import com.biruk.habeshaJobs.Model.JobApplication;
 import com.biruk.habeshaJobs.Model.User.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonMerge;
 import jakarta.persistence.*;
 import org.locationtech.jts.geom.Point;

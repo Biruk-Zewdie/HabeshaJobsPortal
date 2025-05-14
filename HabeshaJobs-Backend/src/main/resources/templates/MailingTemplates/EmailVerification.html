@@ -1,0 +1,31 @@
+<!-- resources/templates/mailingTemplates/EmailVerification.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Email Verification</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; background-color: #f9f9f9; padding: 20px;">
+<div style="max-width: 600px; margin: auto; background-color: white; border-radius: 8px; padding: 30px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+    <h2 style="color: #333;">Welcome to HabeshaJobs!</h2>
+
+    <p th:text="'Hi ' + ${firstName} + ','">Hi User,</p>
+
+    <p>Thank you for registering with us. Please click the link below to verify your email address and complete your registration:</p>
+
+    <div style="margin: 20px 0;">
+        <a th:href="@{${verificationUrl}}"
+           style="background-color: #1a73e8; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px;">
+            Verify Email
+        </a>
+    </div>
+
+    <p>If the button above doesn't work, copy and paste the following link into your browser:</p>
+    <p th:text="@{${verificationLink}}" style="word-break: break-all; color: #555;">https://example.com/verify?token=XYZ</p>
+
+    <p style="color: gray; font-size: 0.9em;">This link will expire in 30 minutes.</p>
+
+    <p>Best regards,<br/>The HabeshaJobs Team</p>
+</div>
+</body>
+</html>

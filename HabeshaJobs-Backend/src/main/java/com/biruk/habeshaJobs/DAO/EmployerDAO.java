@@ -15,6 +15,6 @@ public interface EmployerDAO extends JpaRepository<Employer, UUID> {
     jpa will looking for the field userId step by step based on the naming, so first it will look for Employer.User
     and then User.UserId
      */
-    public Optional<Employer> findEmployerByUserUserId(UUID UserId);
+    Optional<Employer> findByUser_UserId(UUID userId);
 
 }

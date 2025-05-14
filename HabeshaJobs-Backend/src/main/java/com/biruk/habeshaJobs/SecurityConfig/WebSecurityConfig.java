@@ -61,7 +61,7 @@ public class WebSecurityConfig {
         return http.csrf(c -> c.disable())
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                                .requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/auth/**","/verify").permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/jobs")).hasAuthority("Employer")
                                 .anyRequest().authenticated()
                 ).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -2,8 +2,8 @@ package com.biruk.habeshaJobs.Model.User;
 
 import com.biruk.habeshaJobs.Model.Employer;
 import com.biruk.habeshaJobs.Model.JobSeeker.JobSeeker;
+import com.biruk.habeshaJobs.Model.VerificationToken;
 import jakarta.persistence.*;
-import org.springframework.lang.NonNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -41,6 +42,13 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private boolean isAccountVerified;
+
+    private boolean isLoginDisabled;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<VerificationToken> verificationTokens;
+
     @OneToOne (mappedBy = "user", cascade = CascadeType.ALL)
     private JobSeeker jobSeeker;
 
@@ -64,14 +72,18 @@ public class User implements UserDetails {
 
     }
 
-    public User (UUID userId, String email, String password, Role role, JobSeeker jobSeeker, Employer employer){
+    public User (UUID userId, String email, String password, Role role, boolean isAccountVerified, boolean isLoginDisabled, Set<VerificationToken> verificationTokens, JobSeeker jobSeeker, Employer employer){
         this.userId = userId;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.isAccountVerified = isAccountVerified;
+        this.isLoginDisabled = isLoginDisabled;
+        this.verificationTokens = verificationTokens;
         this.jobSeeker = jobSeeker;
         this.employer = employer;
     }
+
 
     public UUID getUserId () {
         return userId;
@@ -103,6 +115,30 @@ public class User implements UserDetails {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public boolean getIsAccountVerified() {
+        return isAccountVerified;
+    }
+
+    public void setIsAccountVerified(boolean isAccountVerified) {
+        this.isAccountVerified = isAccountVerified;
+    }
+
+    public boolean getIsLoginDisabled() {
+        return isLoginDisabled;
+    }
+
+    public void setIsLoginDisabled(boolean isLoginDisabled) {
+        this.isLoginDisabled = isLoginDisabled;
+    }
+
+    public Set<VerificationToken> getSecureTokens() {
+        return verificationTokens;
+    }
+
+    public void setSecureTokens(Set<VerificationToken> verificationTokens) {
+        this.verificationTokens = verificationTokens;
     }
 
     public JobSeeker getJobSeeker() {

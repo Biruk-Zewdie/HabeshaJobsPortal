@@ -33,6 +33,13 @@ public class JwtFilter extends OncePerRequestFilter {
         this.jwtUtil = jwtUtil;
     }
 
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        return path.startsWith("/auth"); // ✅ This skips JWT filtering for /auth/**
+    }
+
     //this method is called for each request that hits our server.
     //It checks if the request has a valid JWT in the Authorization header.
     //It uses a lots of helper methods that are defined below.

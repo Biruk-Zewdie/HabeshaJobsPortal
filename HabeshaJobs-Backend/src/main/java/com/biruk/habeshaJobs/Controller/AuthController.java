@@ -2,6 +2,7 @@ package com.biruk.habeshaJobs.Controller;
 
 import com.biruk.habeshaJobs.DTO.*;
 import com.biruk.habeshaJobs.Service.AuthService;
+import org.antlr.v4.runtime.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -55,6 +56,16 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing your request.");
+        }
+    }
+
+    @GetMapping("/verify")
+    public ResponseEntity<String> verifyEmail (@RequestParam String token){
+        boolean isEmailVerified = authService.verifyUserEmail(token);
+        if(isEmailVerified){
+            return ResponseEntity.ok("Email verified successfully");
+        }else {
+            return ResponseEntity.badRequest().body("Invalid or expired token");
         }
     }
 

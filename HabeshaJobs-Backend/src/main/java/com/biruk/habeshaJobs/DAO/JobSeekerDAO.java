@@ -11,4 +11,6 @@ import java.util.UUID;
 @Repository
 public interface JobSeekerDAO extends JpaRepository <JobSeeker, UUID> {
 
+    Optional<JobSeeker> findByUser_userId (UUID userId);
+
 }
